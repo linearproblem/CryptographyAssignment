@@ -1,4 +1,11 @@
 /******************************************************************************
+TODO:
+
+******************************************************************************/
+
+
+
+/******************************************************************************
 INCLUDE LIBRARIES
 ******************************************************************************/
 #include <stdio.h>
@@ -10,10 +17,9 @@ DECLARE FUNCTIONS
 ******************************************************************************/
 void printHeader();
 void mainMenu();
-void encryptString();
-// ADD ZERO ARRAYS
+void encryptString(); // ENCRYPT rotation Cipher String
+encryptString();
 
-void guessNum();
 
 
 /******************************************************************************
@@ -21,12 +27,12 @@ MAIN
 ******************************************************************************/
 int main(){
     // Prints application header
-          printHeader();
+         //printHeader();
     // Opens user menu
-         mainMenu();
+       //  mainMenu();
 
     // Runs text encryption function
-        //encryptString();
+        encryptString();
         
         int x;
     scanf("%d",&x); // temp delay
@@ -55,6 +61,11 @@ void printHeader(){
     printf("|    XXXXXXXXXX  XXXXXXXXX  X                X         X  XXXXXXXXXXX  X         XX |\n");
     printf("|                                                                                   |\n");
     printf("+-----------------------------------------------------------------------------------+\n");
+/******************************************************************************
+TODO:
+- Use cleaner looking header
+
+******************************************************************************/
 }
 
 void mainMenu() {
@@ -68,7 +79,7 @@ void mainMenu() {
     switch (userInput) {
 
         case 1:
-       //     helloWorld();
+       //     Rotation Ciper function FIX
             break;
 
         case 2:
@@ -84,50 +95,107 @@ void mainMenu() {
 
 
 void encryptString(){
-/* Collects text from user input and runs encryption function */
+    /* Collects text from user input and runs encryption function */
 	int MAXCHAR = 300; // Sets maximum characters that can be typed in
+	int key = -1;
 	
 	// Collects and stores user entered characters
 	char textString[MAXCHAR];
-	int textInteger[MAXCHAR];
+	int textInteger[MAXCHAR]; // Stores encrypted text as in values
 
 		// Initialise both arrays (FIX - External Function)
 		for(int index = 0; index<MAXCHAR; index++){
 			textString[index] = 0;
 			textInteger[index] = 0;
+			/*
+            TODO:
+            - Add zero'ing function here to clean up code         
+            **/
 		}
 		
-	// Collects and stores user entered characters
+    // Collects input string from console
 	printf("\nPlease Enter Text to Encrypt\n"); 
 	fgets(textString,MAXCHAR,stdin); //stores user input into a string
-  
-
 	
+	// Convert sring values into integer equvilants
+	for(int index = 0; index<MAXCHAR; index++){
+        textInteger[index] = textString[index];
+	}
+
+ 
+/******************************************************************************
+TODO:
+x Collect input data
+x Convert string (char) to integer
+x Convert any lowercase characters to uppercase
+x Convert all characters to a replacement number from 0-25
+- Add key variable from -25 to 25
+    - Collect key from user (later)
+- 
+
+******************************************************************************/
+	
+
+// TODO: convert lowercase to uppercase (TEST!!!)
+
+	// Convert lowercase characters to uppercase
+	for(int index = 0; index<MAXCHAR; index++){
+	    if (textInteger[index]>=97&&textInteger[index]<=122){ // Checks if the ACII letter is in the lowercase range i.e [97(a) to 122(z)]
+            textInteger[index] = textInteger[index] - 32;   // 97(letter a) - 32 = 65(letter A)         
+	    }
+	}
+
 
 
 
 /*
-	0 = A, B = 1 e.c.t.
-	letterValue[]%27
-*/
+ * 
+ *  Convert uppercase letters (ONLY) from ACII letters to num(0-25 equiv)
+ *  Applies the key
+ * 
+ * 
+ */
 
-// Prints output
-  for(int index = 0; index<5 ; index++){
-	printf("%d\n",(int)textString[index]);  
+/*  PRINT COMMANDS USED FIX
+    printf("ORIG LETR VALUE: %c\n",textString[index]);
+	printf("UNENCRYPT VALUE: %d\n",(int)textString[index]);  // Prints output (TEMP)
+	printf("ZRO-TWENT VALUE: %d\n",textInteger[index]);
+	printf("ENCRYPTED VALUE :%c\n\n",textInteger[index]); // prints current value of integer
+*/
+    
+    for(int index = 0; index<MAXCHAR; index++){ // FIX MAKE MAX VALUE 
 	
-	// Convert capitals letters into numbers A = 0, B = 1, C = 2... e.c.t.
-	if(textString[index]>=65&&textString[index]<=90){ // Makes sure input is only capital letters
-		textInteger[index]=(int)textString[index]-65; 	// Converts string into text Integers (and then makes them between 0 and 99)
-		printf("works\n"); //FIX WAS JUST FOR TEST
-	}else{
-	// Array entered doesn't include only capital letters
-		printf("ERROR: only enter text in capital letters\n\n");
-        encryptString(); // Restarts Function
-	};
-	
-	printf("%d\n",textInteger[index]); // prints current value of integer
-	break;
+    	// Convert capitals letters into numbers A = 0, B = 1, C = 2... e.c.t.
+    	if(textInteger[index]>=65&&textInteger[index]<=90){ // Makes sure it only converts capital letters
+    	
+    	   // Converts string into text Integers (and then makes them between 0 and 99)
+    	   textInteger[index]=textInteger[index]-65; 	
+        
+    		
+    	// TODO: key from -25 to 26 which adds a value onto the characters (-24 = 24?) where 26 - 0	
+    	   // Adds key value onto code
+    	   textInteger[index] = (textInteger[index]+key)%26;
+    	   
+    	   // Loops some letters around if a -ve key is given (only for required letters)
+    	   if(textInteger[index]<0){
+    	       textInteger[index] = textInteger[index] + 26; 
+    	   }
+        // TODO: CONVERT BACK TO FULLCAPS
+            textInteger[index]=textInteger[index]+65; 
+        }//END IF
     }
+// PRINT STRING
+    printf("INPUT STRING:\n");
+	for(int index = 0; index<MAXCHAR; index++){
+	printf("%c",textString[index]);
+	}
+	printf("\n\nOUTPUT STRING:\n");
+	for(int index = 0; index<MAXCHAR; index++){
+	printf("%c",textInteger[index]);
+	}
+
+
+
 };
 
 
