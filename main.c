@@ -10,7 +10,6 @@ DECLARE FUNCTIONS
 ******************************************************************************/
 void printHeader();
 void mainMenu();
-void helloWorld(); // Prints the text "Hello World into the console"
 void encryptString();
 // ADD ZERO ARRAYS
 
@@ -21,17 +20,14 @@ void guessNum();
 MAIN
 ******************************************************************************/
 int main(){
-   // guessNum();
-
     // Prints application header
           printHeader();
     // Opens user menu
          mainMenu();
-    // Runs hello world function
-        helloWorld();
 
     // Runs text encryption function
         //encryptString();
+        
         int x;
     scanf("%d",&x); // temp delay
     return 0;
@@ -62,18 +58,17 @@ void printHeader(){
 }
 
 void mainMenu() {
-    // Run Hello World Function
-    printf("\t Press 1 for Hello World\n");
-    printf("\t Press 2 for Rotation Cipher\n");
-    printf("\t Press 3 for Substitution Cipher\n");
-
+    // Display menu options
+    printf("\t Press 1 for Rotation Cipher\n");
+    printf("\t Press 2 for Substitution Cipher\n");
+    // Collect user selection
     int userInput;
     scanf("%d",&userInput); // Record User Input
     printf("%d",userInput);
     switch (userInput) {
 
         case 1:
-            helloWorld();
+       //     helloWorld();
             break;
 
         case 2:
@@ -86,38 +81,6 @@ void mainMenu() {
             break;
     }
 }
-
-void helloWorld(){
-
-// Silly ACII Art printed to console, as displayed below
-    printf("+--------------------------------------------+\n");
-    printf("|  X                  X    X                 |\n");
-    printf("|  X                  X    X                 |\n");
-    printf("|  X                  X    X                 |\n");
-    printf("|  X                  X    X                 |\n");
-    printf("|  X                  X    X                 |\n");
-    printf("|  XXXXXX   XXXXXXXX  X    X      XXXX       |\n");
-    printf("|  XX   XX  XX     X  X    X    XX    XX     |\n");
-    printf("|  X     XX XXXXXXX   X    X   XX      XX    |\n");
-    printf("|  X      X X         X    X    XX    XX     |\n");
-    printf("|  X      X  XXXXX    X    X      XXXX       |\n");
-    printf("|                                            |\n");
-    printf("|                                            |\n");
-    printf("|  X         X                           XX  |\n");
-    printf("|  X        XXX             XX  X        XX  |\n");
-    printf("|  X   XX     X          XXX XX X        XXX |\n");
-    printf("|  X   XX     X  XXXXXX  X    X X         XX |\n");
-    printf("|  X XXXX    X  XX    XX X      X  XXXXX XXX |\n");
-    printf("|   X   X   XX  X    XX  X      X  XX  XXXXX |\n");
-    printf("|       XXXXX   XXXXX    X      X   XXX    X |\n");
-    printf("|                                            |\n");
-    printf("+--------------------------------------------+\n");
-
-
-/* Prints the text "Hello World" into the console*/
-  printf("\n\tHello World\n\n\n\n\n");
-  mainMenu();
-};
 
 
 void encryptString(){
@@ -164,12 +127,13 @@ void encryptString(){
 	
 	printf("%d\n",textInteger[index]); // prints current value of integer
 	break;
+    }
+};
+
+
 /* 10 for quiz, 12.5 for assignment
 LOWERCASE STUFF FOR LATER
 97<= numberval <=122
 */
-}
-};
-
 
 // test update
