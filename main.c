@@ -18,7 +18,7 @@ DECLARE FUNCTIONS
 void printHeader();
 void mainMenu();
 void encryptString(); // ENCRYPT rotation Cipher String
-encryptString();
+//encryptString();
 
 
 
@@ -194,7 +194,7 @@ x Convert all characters to a replacement number from 0-25
 	printf("%c",textInteger[index]);
 	}
 
-
+printf("%d",textInteger);
 
 };
 
