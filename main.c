@@ -2,7 +2,23 @@
 TODO:
 
 ******************************************************************************/
+/******************************************************************************
+LAYOUT
 
+ Rotation Cipher
+    - Encrypt
+        - Provide Key
+        - Generate Random Key
+    - Decrypt
+        - With Key
+        - Without Key (automatic)
+ Substitution Cipher
+    - Encrypt
+        - Give table of values in csv
+    - Decrypt
+        - Using csv key file
+        - Automatic Decryption
+******************************************************************************/
 
 
 /******************************************************************************
@@ -10,7 +26,6 @@ INCLUDE LIBRARIES
 ******************************************************************************/
 #include <stdio.h>
 
-// test upload from app
 
 /******************************************************************************
 DECLARE FUNCTIONS
@@ -19,6 +34,27 @@ void printHeader();
 void mainMenu();
 void encryptString(); // ENCRYPT rotation Cipher String
 //encryptString();
+void decryptString();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -26,18 +62,71 @@ void encryptString(); // ENCRYPT rotation Cipher String
 MAIN
 ******************************************************************************/
 int main(){
+// TODO: TEST CODE ON che
+    FILE *input;
+    printf("line 67");
+    printf("%c",(char)feof(input));
+    printf("line 69");
+    input = fopen("input.txt","r");
+    printf("line 71");
+//    printf("%c",(char)feof(input));
+    printf("line 73\n");
+    //while(feof(input)== 0){
+    int n = 0;
+    while(n < 20){
+        // Read Character
+        char c;
+        fscanf(input, "%c",&c);
+        n++;
+        /* COUNT SPACES
+         * int spaces;
+         * if (c ==32)
+         *      space++;
+         * */
+        // doEncryption function
+
+        // Print to file
+        printf("%c",c);
+
+    }
+   // decryptString();
+
     // Prints application header
          //printHeader();
     // Opens user menu
        //  mainMenu();
 
     // Runs text encryption function
-        encryptString();
+       // encryptString();
         
-        int x;
-    scanf("%d",&x); // temp delay
+  //      int tmp;
+    //scanf("%d",&tmp); // temp delay
+    printf("print test");
     return 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 /******************************************************************************
@@ -194,10 +283,105 @@ x Convert all characters to a replacement number from 0-25
 	printf("%c",textInteger[index]);
 	}
 
-printf("%d",textInteger);
+//printf("%d",textInteger);
 
 };
+/*****************************************************************************/
+void decryptString(){
+    /* Collects text from user input and runs encryption function */
+    int MAXCHAR = 300; // Sets maximum characters that can be typed in
+    int key = -1;
 
+    // Collects and stores user entered characters
+    char textString[MAXCHAR];
+    int textInteger[MAXCHAR]; // Stores encrypted text as in values
+
+    // Initialise both arrays (FIX - External Function)
+    for(int index = 0; index<MAXCHAR; index++){
+        textString[index] = 0;
+        textInteger[index] = 0;
+        /*
+        TODO:
+        - Add zero'ing function here to clean up code
+        **/
+    }
+
+    // Collects input string from console
+    printf("\nPlease Enter Text to Encrypt\n");
+    fgets(textString,MAXCHAR,stdin); //stores user input into a string
+
+    // Convert sring values into integer equvilants
+    for(int index = 0; index<MAXCHAR; index++){
+        textInteger[index] = textString[index];
+    }
+
+
+/******************************************************************************
+TODO:
+x Collect input data
+x Convert string (char) to integer
+x Convert any lowercase characters to uppercase
+x Convert all characters to a replacement number from 0-25
+- Add key variable from -25 to 25
+    - Collect key from user (later)
+-
+
+******************************************************************************/
+
+
+
+
+
+
+/*
+ *
+ *  Convert uppercase letters (ONLY) from ACII letters to num(0-25 equiv)
+ *  Applies the key
+ *
+ *
+ */
+
+/*  PRINT COMMANDS USED FIX
+    printf("ORIG LETR VALUE: %c\n",textString[index]);
+	printf("UNENCRYPT VALUE: %d\n",(int)textString[index]);  // Prints output (TEMP)
+	printf("ZRO-TWENT VALUE: %d\n",textInteger[index]);
+	printf("ENCRYPTED VALUE :%c\n\n",textInteger[index]); // prints current value of integer
+*/
+
+    for(int index = 0; index<MAXCHAR; index++){ // FIX MAKE MAX VALUE
+
+        // Convert capitals letters into numbers A = 0, B = 1, C = 2... e.c.t.
+        if(textInteger[index]>=65&&textInteger[index]<=90){ // Makes sure it only converts capital letters
+
+            // Converts string into text Integers (and then makes them between 0 and 99)
+            textInteger[index]=textInteger[index]-65;
+
+
+            // TODO: key from -25 to 26 which adds a value onto the characters (-24 = 24?) where 26 - 0
+            // Adds key value onto code
+            textInteger[index] = (textInteger[index]+key)%26;
+
+            // Loops some letters around if a -ve key is given (only for required letters)
+            if(textInteger[index]<0){
+                textInteger[index] = textInteger[index] + 26;
+            }
+            // TODO: CONVERT BACK TO FULLCAPS
+            textInteger[index]=textInteger[index]+65;
+        }//END IF
+    }
+// PRINT STRING
+    printf("INPUT STRING:\n");
+    for(int index = 0; index<MAXCHAR; index++){
+        printf("%c",textString[index]);
+    }
+    printf("\n\nOUTPUT STRING:\n");
+    for(int index = 0; index<MAXCHAR; index++){
+        printf("%c",textInteger[index]);
+    }
+
+   // printf("%d",textInteger);
+
+};
 
 /* 10 for quiz, 12.5 for assignment
 LOWERCASE STUFF FOR LATER
