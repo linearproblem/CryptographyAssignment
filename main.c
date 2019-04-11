@@ -1,5 +1,12 @@
 /******************************************************************************
 TODO:
+ - Setup menu structure
+ - Connect random seed with the rotation cipher
+    - Add in sections/todos with information bout other key entry options
+
+
+- Fix application exit
+- Test encrypt vs decrypt
 
 ******************************************************************************/
 /******************************************************************************
@@ -25,109 +32,60 @@ LAYOUT
 INCLUDE LIBRARIES
 ******************************************************************************/
 #include <stdio.h>
+#include <stdlib.h> // Used for the random function
+#include <time.h>   // Used to get seed for random number generator
 
+// Changes console text colour
+#define GREEN   "\x1b[32m"   // Green for header
+#define CYAN    "\x1b[36m"   // Cyan for user entered text
+#define RED     "\x1b[31m"   // Red for errors
+#define YELLOW "\x1b[33m"    // Yellow for console output
+#define RESET   "\x1b[0m"    // Default (white) for menu and other text
+    // USAGE:     printf(RED "This is an error\n" RESET); 
 
 /******************************************************************************
 DECLARE FUNCTIONS
 ******************************************************************************/
+// User Interface
 void printHeader();
 void mainMenu();
-void encryptString(); // ENCRYPT rotation Cipher String
-//encryptString();
-void decryptString();
+    // Sub-Menu
+        // Rotation Cipher
+            // User key
+            // Generate Key
+            // Please enter key
+                // Encrypt
+                    // key = key, pass onto function
+                // Decrypt
+                    // key = -key, pass onto function
+        // Substitution Cipher
 
+// Encryption/Decryption Functions
+void rotationCipher(int direction); // ENCRYPT and DECRYPT using rotation Cipher String
+int generateKey(); // Generates a key (1 to 25) for rotation and substitution cipher
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// Zeroing Functions
+void zeroCharArray(char arrayName[], int arraySize); // Sets all values in a char type array to zero
+void zeroIntegerArray(int arrayName[], int arraySize); // Sets all values in an integer type array to zero
 
 
 /******************************************************************************
 MAIN
 ******************************************************************************/
 int main(){
-// TODO: TEST CODE ON che
-    FILE *input;
-    printf("line 67");
-    printf("%c",(char)feof(input));
-    printf("line 69");
-    input = fopen("input.txt","r");
-    printf("line 71");
-//    printf("%c",(char)feof(input));
-    printf("line 73\n");
-    //while(feof(input)== 0){
-    int n = 0;
-    while(n < 20){
-        // Read Character
-        char c;
-        fscanf(input, "%c",&c);
-        n++;
-        /* COUNT SPACES
-         * int spaces;
-         * if (c ==32)
-         *      space++;
-         * */
-        // doEncryption function
-
-        // Print to file
-        printf("%c",c);
-
-    }
-   // decryptString();
-
     // Prints application header
-         //printHeader();
+        printHeader();
     // Opens user menu
-       //  mainMenu();
+        mainMenu();
 
     // Runs text encryption function
-       // encryptString();
-        
-  //      int tmp;
-    //scanf("%d",&tmp); // temp delay
+      //rotationCipher();
+    int tmp = generateKey();
+   scanf("%d",&tmp); // temp delay
     printf("print test");
+
     return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /******************************************************************************
 EXTERNAL FUNCTIONS
@@ -135,97 +93,160 @@ EXTERNAL FUNCTIONS
 
 void printHeader(){
     // Prints splash back
-    printf("+-----------------------------------------------------------------------------------+\n");
-    printf("|                                                                                   |\n");
-    printf("|     XXXXXXXXX  XXXXXXXXX  XXXXXXXXXXXXX    X         X  XXXXXXXXXXX  XXXXXXXXXXX  |\n");
-    printf("|   XXX              X      X           X    X         X  X            X         XX |\n");
-    printf("|  XX                X      X           XX   X         X  X            X          X |\n");
-    printf("| XX                 X      X           XX   X         X  X            X          X |\n");
-    printf("| X                  X      X           X    X         X  X            X          X |\n");
-    printf("| X                  X      XXXXXXXXXXXX     XXXXXXXXXXX  XXXXXXXX     XXXXXXXXXXXX |\n");
-    printf("| X                  X      XX               X         X  X            X   XX       |\n");
-    printf("| X                  X      X                X         X  X            X    XXX     |\n");
-    printf("| XX                 X      X                X         X  X            X      XXX   |\n");
-    printf("|  XXX               X      X                X         X  X            X        XX  |\n");
-    printf("|    XXXXXXXXXX  XXXXXXXXX  X                X         X  XXXXXXXXXXX  X         XX |\n");
-    printf("|                                                                                   |\n");
-    printf("+-----------------------------------------------------------------------------------+\n");
-/******************************************************************************
-TODO:
-- Use cleaner looking header
-
-******************************************************************************/
+    printf(GREEN); // Sets header colour to green
+    printf(" _____              _       ___  _         _                 \n");
+    printf("/__   \\  ___ __  __| |_    / __\\(_) _ __  | |__    ___  _ __ \n");
+    printf("  / /\\/ / _ \\ \\/ /| __|   / /   | || '_ \\ | '_ \\  / _ \\| '__|\n");
+    printf(" / /   |  __/ >  < | |_  / /___ | || |_) || | | ||  __/| |   \n");
+    printf(" \\/     \\___|/_/\\_\\ \\__| \\____/ |_|| .__/ |_| |_| \\___||_|   \n");
+    printf("                                   |_|                       \n");
+    printf(RESET); // Resets back to white
+    printf("+------------------------------------------------------------+\n");
 }
 
 void mainMenu() {
+    printf("\n-- Main Menu --\n");
     // Display menu options
-    printf("\t Press 1 for Rotation Cipher\n");
-    printf("\t Press 2 for Substitution Cipher\n");
+    printf("\tRotation Cipher\n");
+        printf("\t\t 1: Encrypt text with key\n");
+        printf("\t\t 2: Encrypt text with random key\n");
+        printf("\t\t 3: Decrypt text with key\n");
+        printf("\t\t 4: Decrypt text without key\n");
+    printf("\n\tSubstitution Cipher\n");
+        printf("\t\t 5: Encrypt text\n");
+        printf("\t\t 6: Decrypt text with key\n");
+        printf("\t\t 7: Decrypt text without key\n");
+    printf("\n\tOther\n");
+        printf("\t\t 0: Exit Application\n");
+
     // Collect user selection
-    int userInput;
-    scanf("%d",&userInput); // Record User Input
-    printf("%d",userInput);
-    switch (userInput) {
-
-        case 1:
-       //     Rotation Ciper function FIX
-            break;
-
-        case 2:
-
-        case 3:
-
-
-        default:
-            printf("\nYou have Not Made A Selection");
-            break;
+    int userInput = 0; // Initialises the user input selection to make sure it is not equal to 7
+    
+    while (userInput != 7){ // Repeats menu selection until user decides to exit
+        printf("\nPlease select an option:"CYAN);
+        scanf("%d",&userInput); // Record User Input
+        printf(RESET);// Changes console text back to white
+      //  printf("%d" RESET,userInput);
+        switch (userInput) {
+    
+            case 1:
+             // Rotation Cipher function encrypt
+                rotationCipher(userInput); // Sends direction
+                break;
+            case 2:
+            // Generate random key
+                rotationCipher(userInput); // Sends direction
+                break;
+            case 3:
+                // Rotation Cipher function decrypt with key
+                rotationCipher(userInput);
+                break;
+            case 4:
+                // Rotation Cipher function decrypt without key
+                break;
+            case 6:
+            //
+                break;
+            case 0: 
+                // Exit application
+                return;
+                break;
+            default:
+                printf(RED"Selection invalid\n"RESET);
+                break;
+        }
+        
     }
+
 }
 
 
-void encryptString(){
+
+void rotationCipher(int direction){
+    // direction specifies whether the function is meant to decrypt or encrypt the text
+    // it is used later on in the function in a switch case argument
+            // 1 = encrypt using given key
+            // 2 = decrypt using given key
+            // 3 = decrpyt automatically
+            // 4 = encrypt using random key
+        
+    /********************************
+    Collect Encyption Key from User
+    *********************************/
+    // User selects where key is to come from
+     int key;
+     //key = -19;           // HARDCODED KEY FIX(remove)
+                                // KEY FROM FILE
+
+    switch (direction){
+        case 1: // Encrypt with given key
+           printf("Please Enter Key:"CYAN);
+           scanf("%d",&key);          // USER INPUT KEY
+           printf(RESET"You entered:"YELLOW"%d\n"RESET,key);
+           break;
+        case 2:// Encrypt with random key
+            key = generateKey(); // Gets generated key
+            // prints both versions of generated key
+            printf("Generated key is:"YELLOW"%d (or %d)\n"RESET,key,-(26-key));
+            break;
+        case 3: // Decrypt with given key
+           printf("Please Enter Key:"CYAN);
+           scanf("%d",&key); // USER INPUT KEY
+           printf(RESET"You entered:"YELLOW"%d\n"RESET,key);
+            // Encrypt key = key
+            // Decrypt key = 26-key (Changes key so it reverses encryption)
+            key = -key;
+            break;
+        case 4:
+        default:
+            printf(RED"Fatal error, this should never happen"RESET);
+            break;
+    }
+    
+    if(key>=-26&&key<=26){ // Checks key is valid
+        if(key<0){
+            /* Converts key to a number from 0 to 25
+            *
+            * For example, if  key = -2    (For E=5: [5+-2]%26 = 3 or C)
+            *          same as key =  24   (For E=5: [5+24]%26 = 3 or C)
+            *
+            * */
+            key = 26+key;
+        }
+    }else{
+        // Gives user an error when key value is not between -26 and 26
+        printf("The provided key is invalid\n");
+    }
+    
+    /********************************
+    Collect Input Text
+    *********************************/
+
     /* Collects text from user input and runs encryption function */
 	int MAXCHAR = 300; // Sets maximum characters that can be typed in
-	int key = -1;
-	
 	// Collects and stores user entered characters
 	char textString[MAXCHAR];
-	int textInteger[MAXCHAR]; // Stores encrypted text as in values
+	int textInteger[MAXCHAR]; // Stores text as integer values
 
-		// Initialise both arrays (FIX - External Function)
-		for(int index = 0; index<MAXCHAR; index++){
-			textString[index] = 0;
-			textInteger[index] = 0;
-			/*
-            TODO:
-            - Add zero'ing function here to clean up code         
-            **/
-		}
-		
+
+    // Initialise both arrays using function
+    zeroCharArray(textString, MAXCHAR);
+    zeroIntegerArray(textInteger, MAXCHAR);
+
     // Collects input string from console
-	printf("\nPlease Enter Text to Encrypt\n"); 
+	printf("\nPlease Enter Text to Encrypt\n "); 
+	getchar(); // Clears console (input stream - https://stackoverflow.com/questions/26318275/fgets-skipping-inputs)
 	fgets(textString,MAXCHAR,stdin); //stores user input into a string
-	
-	// Convert sring values into integer equvilants
+        //TODO: Collect text input from user specified file
+        
+    /********************************
+    Perform Encryption/Decryption Using key
+    *********************************/
+
+	// Convert char values into integer equivalents
 	for(int index = 0; index<MAXCHAR; index++){
         textInteger[index] = textString[index];
 	}
-
- 
-/******************************************************************************
-TODO:
-x Collect input data
-x Convert string (char) to integer
-x Convert any lowercase characters to uppercase
-x Convert all characters to a replacement number from 0-25
-- Add key variable from -25 to 25
-    - Collect key from user (later)
-- 
-
-******************************************************************************/
-	
-
-// TODO: convert lowercase to uppercase (TEST!!!)
 
 	// Convert lowercase characters to uppercase
 	for(int index = 0; index<MAXCHAR; index++){
@@ -233,113 +254,77 @@ x Convert all characters to a replacement number from 0-25
             textInteger[index] = textInteger[index] - 32;   // 97(letter a) - 32 = 65(letter A)         
 	    }
 	}
-
-
-
-
-/*
- * 
- *  Convert uppercase letters (ONLY) from ACII letters to num(0-25 equiv)
- *  Applies the key
- * 
- * 
- */
-
-/*  PRINT COMMANDS USED FIX
-    printf("ORIG LETR VALUE: %c\n",textString[index]);
-	printf("UNENCRYPT VALUE: %d\n",(int)textString[index]);  // Prints output (TEMP)
-	printf("ZRO-TWENT VALUE: %d\n",textInteger[index]);
-	printf("ENCRYPTED VALUE :%c\n\n",textInteger[index]); // prints current value of integer
-*/
     
-    for(int index = 0; index<MAXCHAR; index++){ // FIX MAKE MAX VALUE 
+    for(int index = 0; index<MAXCHAR; index++){
 	
     	// Convert capitals letters into numbers A = 0, B = 1, C = 2... e.c.t.
-    	if(textInteger[index]>=65&&textInteger[index]<=90){ // Makes sure it only converts capital letters
-    	
-    	   // Converts string into text Integers (and then makes them between 0 and 99)
+    	if(textInteger[index]>=65&&textInteger[index]<=90){ // Makes sure it only converts capital letters (leaves spaces)
     	   textInteger[index]=textInteger[index]-65; 	
         
-    		
-    	// TODO: key from -25 to 26 which adds a value onto the characters (-24 = 24?) where 26 - 0	
     	   // Adds key value onto code
     	   textInteger[index] = (textInteger[index]+key)%26;
-    	   
-    	   // Loops some letters around if a -ve key is given (only for required letters)
-    	   if(textInteger[index]<0){
-    	       textInteger[index] = textInteger[index] + 26; 
-    	   }
-        // TODO: CONVERT BACK TO FULLCAPS
+
+            // Convert text back to capital letters
             textInteger[index]=textInteger[index]+65; 
         }//END IF
     }
+    
 // PRINT STRING
-    printf("INPUT STRING:\n");
+    printf("\nINPUT STRING:\n");
 	for(int index = 0; index<MAXCHAR; index++){
-	printf("%c",textString[index]);
+	printf(YELLOW"%c"RESET,textString[index]);
 	}
-	printf("\n\nOUTPUT STRING:\n");
+	printf("\nOUTPUT STRING:\n");
 	for(int index = 0; index<MAXCHAR; index++){
-	printf("%c",textInteger[index]);
+	printf(YELLOW"%c"RESET,textInteger[index]);
 	}
 
 //printf("%d",textInteger);
 
 };
-/*****************************************************************************/
-void decryptString(){
-    /* Collects text from user input and runs encryption function */
-    int MAXCHAR = 300; // Sets maximum characters that can be typed in
-    int key = -1;
 
-    // Collects and stores user entered characters
-    char textString[MAXCHAR];
-    int textInteger[MAXCHAR]; // Stores encrypted text as in values
+/* Initialises random number generator the first time it is run
+ * Uses current system time to generate random-ish number between 0-25
+ *
+ *
+ *
+ * */
 
-    // Initialise both arrays (FIX - External Function)
-    for(int index = 0; index<MAXCHAR; index++){
-        textString[index] = 0;
-        textInteger[index] = 0;
-        /*
-        TODO:
-        - Add zero'ing function here to clean up code
-        **/
+int generateKey(){
+    static int count = 0; // Records whether or not the function has been run 0 = never run, 1 = has run before
+    int key;          // Initialises key
+
+    /* Initialises random number generator the first time it is run*/
+    if (count ==0) {
+        time_t seed; // Gets current system time to use as seed
+        srand((unsigned) time(&seed)); // Gives time in seconds as seed
+        count++; // Sets count to 1, so key is not regenerated each time function is called
     }
 
-    // Collects input string from console
-    printf("\nPlease Enter Text to Encrypt\n");
-    fgets(textString,MAXCHAR,stdin); //stores user input into a string
+    key = rand() % 25 + 1 ; // Gives key from 1 to 25 (because 0 and 26 are unencrypted)
+    return key;
+}
 
-    // Convert sring values into integer equvilants
-    for(int index = 0; index<MAXCHAR; index++){
-        textInteger[index] = textString[index];
+
+void zeroCharArray(char arrayName[], int arraySize){
+// in above line can use *arrayName or arrayName[]
+/* Sets all values in an array to 0;
+ * */
+    for (int index = 0; index<arraySize; index++){
+        arrayName[index] = 0;
     }
-
-
-/******************************************************************************
-TODO:
-x Collect input data
-x Convert string (char) to integer
-x Convert any lowercase characters to uppercase
-x Convert all characters to a replacement number from 0-25
-- Add key variable from -25 to 25
-    - Collect key from user (later)
--
-
-******************************************************************************/
+};
+void zeroIntegerArray(int arrayName[], int arraySize){
+// in above line can use *arrayName or arrayName[]
+/* Sets all values in an array to 0;
+ * */
+    for (int index = 0; index<arraySize; index++){
+        arrayName[index] = 0;
+    }
+};
 
 
 
-
-
-
-/*
- *
- *  Convert uppercase letters (ONLY) from ACII letters to num(0-25 equiv)
- *  Applies the key
- *
- *
- */
 
 /*  PRINT COMMANDS USED FIX
     printf("ORIG LETR VALUE: %c\n",textString[index]);
@@ -348,44 +333,5 @@ x Convert all characters to a replacement number from 0-25
 	printf("ENCRYPTED VALUE :%c\n\n",textInteger[index]); // prints current value of integer
 */
 
-    for(int index = 0; index<MAXCHAR; index++){ // FIX MAKE MAX VALUE
-
-        // Convert capitals letters into numbers A = 0, B = 1, C = 2... e.c.t.
-        if(textInteger[index]>=65&&textInteger[index]<=90){ // Makes sure it only converts capital letters
-
-            // Converts string into text Integers (and then makes them between 0 and 99)
-            textInteger[index]=textInteger[index]-65;
-
-
-            // TODO: key from -25 to 26 which adds a value onto the characters (-24 = 24?) where 26 - 0
-            // Adds key value onto code
-            textInteger[index] = (textInteger[index]+key)%26;
-
-            // Loops some letters around if a -ve key is given (only for required letters)
-            if(textInteger[index]<0){
-                textInteger[index] = textInteger[index] + 26;
-            }
-            // TODO: CONVERT BACK TO FULLCAPS
-            textInteger[index]=textInteger[index]+65;
-        }//END IF
-    }
-// PRINT STRING
-    printf("INPUT STRING:\n");
-    for(int index = 0; index<MAXCHAR; index++){
-        printf("%c",textString[index]);
-    }
-    printf("\n\nOUTPUT STRING:\n");
-    for(int index = 0; index<MAXCHAR; index++){
-        printf("%c",textInteger[index]);
-    }
-
-   // printf("%d",textInteger);
-
-};
-
-/* 10 for quiz, 12.5 for assignment
-LOWERCASE STUFF FOR LATER
-97<= numberval <=122
-*/
-
-// test update
+// CONSOLE COLOUR
+// https://stackoverflow.com/questions/3219393/stdlib-and-colored-output-in-c
