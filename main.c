@@ -1,7 +1,16 @@
 /******************************************************************************
 TODO:
- - Setup menu structure
- - Connect random seed with the rotation cipher
+ - PUT MENU IN MAIN FUNCTION
+ x Connect random seed with the rotation cipher
+ Substitution Cipher
+     x Random key with sub cipher
+    - Use key to encrypt
+    - Use key to decrypt
+
+Auto Decrypt
+    - Rotation Cipher
+    - Substitution Cipher
+
     - Add in sections/todos with information bout other key entry options
 
 
@@ -64,26 +73,31 @@ void mainMenu();
 void rotationCipher(int direction); // ENCRYPT and DECRYPT using rotation Cipher String
 void substitutionCipher();
 int generateKey(); // Generates a key (1 to 25) for rotation and substitution cipher
+void analyseText();
 
 // Zeroing Functions
 void zeroCharArray(char arrayName[], int arraySize); // Sets all values in a char type array to zero
 void zeroIntegerArray(int arrayName[], int arraySize); // Sets all values in an integer type array to zero
+
+void clearStdin(); // clears standard input (resolves fgets error)
 
 
 /******************************************************************************
 MAIN
 ******************************************************************************/
 int main(){
-    substitutionCipher();
+    analyseText();
+        //substitutionCipher();
     // Prints application header
         //printHeader();
     // Opens user menu
-        //mainMenu();
+     //   mainMenu();
 
     // Runs text encryption function
       //rotationCipher();
     int tmp = generateKey();
-   scanf("%d",&tmp); // temp delay
+    scanf("%d",&tmp); // temp delay
+    getchar();
     printf("print test");
 
     return 0;
@@ -149,8 +163,9 @@ void mainMenu() {
                 break;
             case 0: 
                 // Exit application
-                return;
+                printf("You have chosen to leave");//TEMP FIX
                 break;
+                //return 0; // use when in main control
             default:
                 printf(RED"Selection invalid\n"RESET);
                 break;
@@ -282,11 +297,14 @@ void rotationCipher(int direction){
 //printf("%d",textInteger);
 
 };
-void substitutionCipher() {
+void substitutionCipher(){
 /********************************
  Setup Encryption key
 *********************************/
+                //   A, B, C,D,E,F, G,H, I, J, K, L, M, N, O, P, Q, R, S,T,U,V, W, X,Y,Z
     int subKey[26]= {5,14,19,0,1,4,25,6,22,11,13,10,15,12,20,18,24,21,16,9,7,2,17,23,8,3}; // Hard coded Array
+                //   F, O, T,A,B,E, Z,G, W, L, N, K, P, M, U, S, Y, V, Q,J,H,C, R, X,I,D
+
         //zeroIntegerArray(subKey,26); // zeros substitution key array
 
 
@@ -314,7 +332,7 @@ void substitutionCipher() {
  Get input text
 *********************************/
     /* Collects text from user input and runs encryption function */
-    int MAXCHAR = 300; // Sets maximum characters that can be typed in
+    int MAXCHAR = 30; // Sets maximum characters that can be typed in
     // Collects and stores user entered characters
     char textString[MAXCHAR];
     int textInteger[MAXCHAR]; // Stores text as integer values
@@ -324,9 +342,12 @@ void substitutionCipher() {
     zeroIntegerArray(textInteger, MAXCHAR);
 
     // Collects input string from console
-    printf("\nPlease Enter Text to Encrypt\n ");
-    getchar(); // Clears console (input stream - https://stackoverflow.com/questions/26318275/fgets-skipping-inputs)
+    printf("\nPlease Enter Text to Encrypt\n");
+   // getchar(); // Clears console (input stream - https://stackoverflow.com/questions/26318275/fgets-skipping-inputs)
+   // clearStdin();
+
     fgets(textString,MAXCHAR,stdin); //stores user input into a string
+
     //TODO: Collect text input from user specified file
 
 /********************************
@@ -344,34 +365,89 @@ void substitutionCipher() {
             textInteger[index] = textInteger[index] - 32;   // 97(letter a) - 32 = 65(letter A)
         }
     }
+    printf("sub%d\n",subKey[0]);
+
+    for(int index = 0; index<MAXCHAR; index++){
+
+        // Convert capitals letters into numbers A = 0, B = 1, C = 2... e.c.t. (not required for substitution but makes it simpler)
+        if(textInteger[index]>=65&&textInteger[index]<=90){ // Makes sure it only converts capital letters (leaves spaces)
+            textInteger[index]=textInteger[index]-65;
+
+            // Encrypt using substitution
+            for(int subIndex = 0 ;subIndex<26; subIndex++){
+                if (textInteger[index] == subIndex){ //if letter == 0, 1, 2, 3 e.c.t substitute (swap) with key value
+                  printf("%d becomes %d\n",textInteger[index],subKey[subIndex]); //remove FIX used for test
+                  printf("%c becomes %c\n",textInteger[index]+65,subKey[subIndex]+65); //remove FIX used for text
+                   textInteger[index] = subKey[subIndex];
+                   break; // Breaks the loop as soon as the letter is swapped
+                }
+            }
+
+            // Decrypt using substitution //GBKKH RHCKA = hello world
+            for (int keyIndex = 0; keyIndex<26; keyIndex++){
+                if (textInteger[index] == subKey[keyIndex]){ //if letter == 0,1,2,3 e.c.t substitute (swap) with key value
+                    textInteger[index] = keyIndex;
+                    printf("\nTextInteger[%d]=%d",textInteger[index],keyIndex); // change to check letter
+                    printf("\nTextInteger[%c]=%c",textInteger[index]+65,keyIndex+65); // change to check letter FIX
+                    break; // Breaks the loop as soon as the letter is swapped back
+                }
+            }
 
 
-//    for(int index = 0; index<MAXCHAR; index++){
-//
-//        // Convert capitals letters into numbers A = 0, B = 1, C = 2... e.c.t.
-//        if(textInteger[index]>=65&&textInteger[index]<=90){ // Makes sure it only converts capital letters (leaves spaces)
-//            textInteger[index]=textInteger[index]-65;
-//
-//            // Adds key value onto code
-//            textInteger[index] = (textInteger[index]+key)%26;
-//
-//            // Convert text back to capital letters
-//            textInteger[index]=textInteger[index]+65;
-//        }//END IF
-//    }
-//
-//// PRINT STRING
-//    printf("\nINPUT STRING:\n");
-//    for(int index = 0; index<MAXCHAR; index++){
-//        printf(YELLOW"%c"RESET,textString[index]);
-//    }
-//    printf("\nOUTPUT STRING:\n");
-//    for(int index = 0; index<MAXCHAR; index++){
-//        printf(YELLOW"%c"RESET,textInteger[index]);
-//    }
 
-//printf("%d",textInteger);
+        // Convert text back to capital letters
+           textInteger[index] = textInteger[index]+65;
 
+        }//END IF
+    }
+
+
+// PRINT STRING
+    printf("\nINPUT STRING:\n");
+    for(int index = 0; index<MAXCHAR; index++){
+        printf("%c",textString[index]);
+    }
+
+
+    // Convert integer values back to char values
+    for(int index = 0; index<MAXCHAR; index++){
+        if (textString[index]>=0&&textString[index]<26){ // Ensures only upper case letters are converted back
+            textString[index] = textInteger[index];
+        }
+    }
+    printf("\nOUTPUT STRING:\n");
+    for(int index = 0; index<MAXCHAR; index++){
+        printf("%c",textInteger[index]);
+    }
+
+
+}
+void analyseText(){
+    char letters[]= {65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90};
+                    //A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
+    int stats[26];
+    zeroIntegerArray(stats,26);
+    int MAXCHAR = 500;
+    char inputText[MAXCHAR];
+    zeroCharArray(inputText,MAXCHAR);
+    // Record user input
+    printf("\nPlease Enter Text to Encrypt:\n");
+
+
+    fgets(inputText,MAXCHAR,stdin); //stores user input into a string
+
+
+    // Perform analysis
+    for (int i = 0; i<MAXCHAR; i++){ // For each letter in the input
+        for(int index = 0; index<26;index++){ // Check against letters
+            if(inputText[i]==letters[index]){
+               stats[index]++; // add one to the letter count
+                break;
+            }
+        }
+    }
+    for (int i =0; i<26;i++)
+        printf("%c occurs %d times\n",i+65,stats[i]);
 
 }
 
@@ -411,7 +487,14 @@ void zeroIntegerArray(int arrayName[], int arraySize){
 };
 
 
-
+void clearStdin(){
+    // Probably not required while: can be used but left just in case
+    // getchar(); // Clears console input (ensures fgets works)
+    int consoleInput;
+    do{
+        consoleInput = getchar();
+    }while(consoleInput != EOF && consoleInput != '\n');
+}
 
 /*  PRINT COMMANDS USED FIX
     printf("ORIG LETR VALUE: %c\n",textString[index]);
