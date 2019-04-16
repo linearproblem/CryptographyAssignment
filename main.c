@@ -3,15 +3,21 @@ TODO:
  - PUT MENU IN MAIN FUNCTION
  x Connect random seed with the rotation cipher
  Substitution Cipher
-     x Random key with sub cipher
-    - Use key to encrypt
-    - Use key to decrypt
-
-Auto Decrypt
+    x Random key with sub cipher
+    x Use key to encrypt
+    x Use key to decrypt
+    - change key format
+    Auto Decrypt
     - Rotation Cipher
     - Substitution Cipher
 
-    - Add in sections/todos with information bout other key entry options
+TODO:
+    - Seperate code into smaller functions
+    - Use consistent variable names between functions (when useful)
+    - comment function definitions
+         - Look at format of function 
+
+    - Add in sections/todo's with information bout other key entry options
 
 
 - Fix application exit
@@ -104,7 +110,7 @@ int main(){
 }
 
 /******************************************************************************
-EXTERNAL FUNCTIONS
+EXTERNAL FUNCTIONS (function definitions)
 ******************************************************************************/
 void printHeader(){
     // Prints splash back
@@ -152,17 +158,23 @@ void mainMenu() {
                 rotationCipher(userInput); // Sends direction
                 break;
             case 3:
-                // Rotation Cipher function decrypt with key
+            // Rotation Cipher function decrypt with key
                 rotationCipher(userInput);
                 break;
             case 4:
-                // Rotation Cipher function decrypt without key
+            // Rotation Cipher function decrypt without key
+                break;
+            case 5:
+            // Substitution cipher encrypt
                 break;
             case 6:
-            //
+            // Substitution cipher decrypt with key
+                break;
+            case 7:
+            // Substitution cipher decrypt without key
                 break;
             case 0: 
-                // Exit application
+            // Exit application
                 printf("You have chosen to leave");//TEMP FIX
                 break;
                 //return 0; // use when in main control
@@ -170,7 +182,6 @@ void mainMenu() {
                 printf(RED"Selection invalid\n"RESET);
                 break;
         }
-        
     }
 
 }
@@ -186,6 +197,8 @@ void rotationCipher(int direction){
     /********************************
     Collect Encyption Key from User
     *********************************/
+    // TODO: (FIX) CREATE FUNCTION (GET ROTATION KEY)
+
     // User selects where key is to come from
      int key = 0;
      //key = -19;           // HARDCODED KEY FIX(remove)
@@ -236,6 +249,8 @@ void rotationCipher(int direction){
     /********************************
     Collect Input Text
     *********************************/
+    // todo: setup function to do this as well as convert into integer and uppercase getInputText, return: maxsize?
+    //       arguments (int arrayToStoreText, *pointerToLetterCount);
 
     /* Collects text from user input and runs encryption function */
 	int MAXCHAR = 300; // Sets maximum characters that can be typed in
@@ -257,7 +272,7 @@ void rotationCipher(int direction){
     /********************************
     Perform Encryption/Decryption Using key
     *********************************/
-
+    // todo: applyRotationCodec
 	// Convert char values into integer equivalents
 	for(int index = 0; index<MAXCHAR; index++){
         textInteger[index] = textString[index];
@@ -283,7 +298,7 @@ void rotationCipher(int direction){
             textInteger[index]=textInteger[index]+65; 
         }//END IF
     }
-    
+    // todo: printArray arguments: arrayname, arraysize
 // PRINT STRING
     printf("\nINPUT STRING:\n");
 	for(int index = 0; index<MAXCHAR; index++){
@@ -309,6 +324,7 @@ void substitutionCipher(){
 
 
 
+// todo: put into own function generateSubKey(int subKey);
 
 //    // Generate substitution key
 //        for (int index = 0; index < 26; index++) {
@@ -402,7 +418,7 @@ void substitutionCipher(){
     }
 
 
-// PRINT STRING
+    // PRINT STRING
     printf("\nINPUT STRING:\n");
     for(int index = 0; index<MAXCHAR; index++){
         printf("%c",textString[index]);
@@ -419,36 +435,79 @@ void substitutionCipher(){
     for(int index = 0; index<MAXCHAR; index++){
         printf("%c",textInteger[index]);
     }
-
-
 }
-void analyseText(){
+
+void analyseText(){ // NOTE ONLY WORKS WITH CAPITAL LETTERS CURRENTLY
     char letters[]= {65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90};
                     //A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
-    int stats[26];
+
+    int stats[26]; // stores letter occurrences
     zeroIntegerArray(stats,26);
-    int MAXCHAR = 500;
+    int MAXCHAR = 20000;
     char inputText[MAXCHAR];
-    zeroCharArray(inputText,MAXCHAR);
+    zeroCharArray(inputText,MAXCHAR); // Required to clear the memory allocated to these addresses
+    //char inputText[] = "YKBXGWLKHFTGLVHNGMKRFXGEXGWFXRHNKXTKLBVHFXMHUNKRVTXLTKGHMMHIKTBLXABFMAXXOBEMATMFXGWHEBOXLTYMXKMAXFMAXZHHWBLHYMBGMXKKXWPBMAMAXBKUHGXLLHEXMBMUXPBMAVTXLTKMAXGHUEXUKNMNLATMAMHEWRHNVTXLTKPTLTFUBMBHNLBYBMPXKXLHBMPTLTZKBXOHNLYTNEMTGWZKBXOHNLERATMAVTXLTKTGLPXKWBMAXKXNGWXKEXTOXHYUKNMNLTGWMAXKXLMYHKUKNMNLBLTGAHGHNKTUEXFTGLHTKXMAXRTEETEEAHGHNKTUEXFXGVHFXBMHLIXTDBGVTXLTKLYNGXKTE";
+
     // Record user input
-    printf("\nPlease Enter Text to Encrypt:\n");
-
-
+  //  printf("\nPlease Enter Text to Encrypt:\n");
+  //  getText(char textArray, int textInteger,int arraySize);
     fgets(inputText,MAXCHAR,stdin); //stores user input into a string
 
+int count = 0;//Temp for stats FIX to find eng letter frequency
 
     // Perform analysis
-    for (int i = 0; i<MAXCHAR; i++){ // For each letter in the input
-        for(int index = 0; index<26;index++){ // Check against letters
-            if(inputText[i]==letters[index]){
-               stats[index]++; // add one to the letter count
-                break;
-            }
-        }
-    }
-    for (int i =0; i<26;i++)
-        printf("%c occurs %d times\n",i+65,stats[i]);
+//    for (int i = 0; i<MAXCHAR; i++){ // For each letter in the input
+//        for(int index = 0; index<26;index++){ // Check against letters
+//            if(inputText[i]==letters[index]){
+//               stats[index]++; // add one to the letter count
+//               count++; // counts total characters in input text
+//               break; // leave loop as soon as letter is found
+//            }
+//        }
+//    }
 
+    int key = 0; // Current key
+    int maxkey = 0;
+    float chiValue;
+    float chiMaxValue = 0;
+    float normLetterChance[6]; // chance of each english letter occurring
+    normLetterChance[0]= 0.1;
+    normLetterChance[1]= 0.1;
+    normLetterChance[2]= 0.15;
+    normLetterChance[3]= 0.2;
+    normLetterChance[4]= 0.3;
+    normLetterChance[5]= 0.15;
+    float expectedStats[26]; // change to expectedLetterCount?
+    stats[0]=30;
+    stats[1]=14;
+    stats[2]=34;
+    stats[3]=45;
+    stats[4]=57;
+    stats[5]=20;
+    count = 200;
+    // FOR EACH KEY COMBINATION
+        // Normal probability of each letter
+        // expected occurrences of each letter based on normal letter probability (letterOccurrences * letterStats)
+
+
+        // FOR EACH LETTER (FIND CHI VALUE) - start with one
+            chiValue = 0; // initialise chi value each time it runs
+            for (int letter = 0;letter<6;letter++){
+                // Uses english letter frequency to find expected letter count
+                expectedStats[letter] = count*normLetterChance[letter];
+                // Partially completes chi square (goodness of fit) test comparing to English letter frequency
+                chiValue = (stats[letter]-expectedStats[letter])*(stats[letter]-expectedStats[letter])/expectedStats[letter] + chiValue;
+                printf("Exp Stats: %f\n",expectedStats[letter]);
+                printf("NORM LETTER CHANCE: %f\n",normLetterChance[letter]);
+                printf("Chi Score: %f\n",chiValue);
+            }
+
+//    for (int i =0; i<26;i++)
+//        printf("%c occurs %d times\n",i+65,stats[i]);
+//    for (int i =0; i<26;i++)
+//        printf("%c occurs %f %% of times\n",i+65,(float)(stats[i])/count*100);
+
+    printf("COUNT OF LETTERS IS:%d\n",count);
 }
 
 int generateKey(){
@@ -476,7 +535,7 @@ void zeroCharArray(char arrayName[], int arraySize){
     for (int index = 0; index<arraySize; index++){
         arrayName[index] = 0;
     }
-};
+}
 void zeroIntegerArray(int arrayName[], int arraySize){
 // in above line can use *arrayName or arrayName[]
 /* Sets all values in an array to 0;
@@ -484,7 +543,7 @@ void zeroIntegerArray(int arrayName[], int arraySize){
     for (int index = 0; index<arraySize; index++){
         arrayName[index] = 0;
     }
-};
+}
 
 
 void clearStdin(){
@@ -505,3 +564,24 @@ void clearStdin(){
 
 // CONSOLE COLOUR
 // https://stackoverflow.com/questions/3219393/stdlib-and-colored-output-in-c
+
+//void crackRotation(int textInteger[],int MAXCHAR,int key){
+//// trying to return array after key has been applied, could use for rotation cipher
+//    for(int index = 0; index<MAXCHAR; index++){
+//
+//        // Convert capitals letters into numbers A = 0, B = 1, C = 2... e.c.t.
+//        if(textInteger[index]>=65&&textInteger[index]<=90){ // Makes sure it only converts capital letters (leaves spaces)
+//            textInteger[index]=textInteger[index]-65;
+//
+//            // Adds key value onto code
+//            textInteger[index] = (textInteger[index]+key)%26;
+//
+//            // Convert text back to capital letters
+//            textInteger[index]=textInteger[index]+65;
+//        }//END IF
+//    }
+//
+//
+//
+//
+//}
