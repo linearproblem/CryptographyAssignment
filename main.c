@@ -15,7 +15,7 @@ TODO:
     - Seperate code into smaller functions
     - Use consistent variable names between functions (when useful)
     - comment function definitions
-         - Look at format of function 
+         - Look at format of function
 
     - Add in sections/todo's with information bout other key entry options
 
@@ -36,9 +36,9 @@ LAYOUT
         - Without Key (automatic)
  Substitution Cipher
     - Encrypt
-        - Give table of values in csv
+        - Using substitution array
     - Decrypt
-        - Using csv key file
+        - Using substitution array
         - Automatic Decryption
 ******************************************************************************/
 
@@ -56,7 +56,7 @@ INCLUDE LIBRARIES
 #define RED     "\x1b[31m"   // Red for errors
 #define YELLOW "\x1b[33m"    // Yellow for console output
 #define RESET   "\x1b[0m"    // Default (white) for menu and other text
-    // USAGE:     printf(RED "This is an error\n" RESET); 
+    // USAGE:     printf(RED "This is an error\n" RESET);
 
 /******************************************************************************
 DECLARE FUNCTIONS (Function Prototypes)
@@ -76,14 +76,39 @@ void mainMenu();
         // Substitution Cipher
 
 // Encryption/Decryption Functions
-void rotationCipher(int direction); // ENCRYPT and DECRYPT using rotation Cipher String
+void rotationCipher(int key,int direction); // ENCRYPT and DECRYPT using rotation Cipher String
+
+// FIX EACH TASK REQUIRES SEPARATE FUNCTION
+void encryptRotation();
+void decryptRotation();
+
+// Rotation only functions
+int getRotationKey(); // Gets rotation key from user specified location
+
+
+
+
+
 void substitutionCipher();
+
+// FIX EACH TASK REQUIRES SEPARATE FUNCTION
+void encryptSubstitution();
+void decryptSubstitution();
+
+// SHARED FUNCTIONS
+
+void getTextInput(int arrayName);
+
 int generateKey(); // Generates a key (1 to 25) for rotation and substitution cipher
 void analyseText();
+
 
 // Zeroing Functions
 void zeroCharArray(char arrayName[], int arraySize); // Sets all values in a char type array to zero
 void zeroIntegerArray(int arrayName[], int arraySize); // Sets all values in an integer type array to zero
+
+// Shared Functions
+void printArray(char arrayName[],int arraySize);
 
 void clearStdin(); // clears standard input (resolves fgets error)
 
@@ -92,12 +117,13 @@ void clearStdin(); // clears standard input (resolves fgets error)
 MAIN
 ******************************************************************************/
 int main(){
-    analyseText();
+    encryptRotation();
+   // analyseText();
         //substitutionCipher();
     // Prints application header
-        //printHeader();
+       // printHeader();
     // Opens user menu
-     //   mainMenu();
+       // mainMenu();
 
     // Runs text encryption function
       //rotationCipher();
@@ -114,14 +140,12 @@ EXTERNAL FUNCTIONS (function definitions)
 ******************************************************************************/
 void printHeader(){
     // Prints splash back
-    printf(GREEN); // Sets header colour to green
     printf(" _____              _       ___  _         _                 \n");
     printf("/__   \\  ___ __  __| |_    / __\\(_) _ __  | |__    ___  _ __ \n");
     printf("  / /\\/ / _ \\ \\/ /| __|   / /   | || '_ \\ | '_ \\  / _ \\| '__|\n");
     printf(" / /   |  __/ >  < | |_  / /___ | || |_) || | | ||  __/| |   \n");
     printf(" \\/     \\___|/_/\\_\\ \\__| \\____/ |_|| .__/ |_| |_| \\___||_|   \n");
     printf("                                   |_|                       \n");
-    printf(RESET); // Resets back to white
     printf("+------------------------------------------------------------+\n");
 }
 void mainMenu() {
@@ -141,25 +165,25 @@ void mainMenu() {
 
     // Collect user selection
     int userInput = 0; // Initialises the user input selection to make sure it is not equal to 7
-    
+
     while (userInput != 7){ // Repeats menu selection until user decides to exit
-        printf("\nPlease select an option:"CYAN);
+        printf("\nPlease select an option:");
         scanf("%d",&userInput); // Record User Input
-        printf(RESET);// Changes console text back to white
-      //  printf("%d" RESET,userInput);
+      //  printf("%d" ,userInput);
         switch (userInput) {
-    
+
             case 1:
              // Rotation Cipher function encrypt
-                rotationCipher(userInput); // Sends direction
+            //    rotationCipher(userInput); // Sends direction
+                encryptRotation(); //(yeah?FIX)
                 break;
             case 2:
             // Generate random key
-                rotationCipher(userInput); // Sends direction
+            //    rotationCipher(userInput); // Sends direction
                 break;
             case 3:
             // Rotation Cipher function decrypt with key
-                rotationCipher(userInput);
+             //   rotationCipher(userInput);
                 break;
             case 4:
             // Rotation Cipher function decrypt without key
@@ -173,64 +197,118 @@ void mainMenu() {
             case 7:
             // Substitution cipher decrypt without key
                 break;
-            case 0: 
+            case 0:
             // Exit application
                 printf("You have chosen to leave");//TEMP FIX
                 break;
                 //return 0; // use when in main control
             default:
-                printf(RED"Selection invalid\n"RESET);
+                printf("Selection invalid\n");
                 break;
         }
     }
 
 }
+// TODO:
+//    - Lower to uppercase
+//    - Get key from user
+//    - Get input text
 
-void rotationCipher(int direction){
+/* NAME:
+ *  encryptRotation
+ * USAGE:
+ *  Encrypts text using rotation cipher
+ *
+ * INPUT:
+ *  (none)
+ *
+ * RETURN:
+ *  (none)
+ *
+ * LIMITATIONS:
+ *  Only converts English A-Z characters
+ *  FIX (MAX CHAR SIZE)
+ * */
+void encryptRotation(){
+  int key = getRotationKey(); // Get rotation key from user specified location
+
+  rotationCipher(key,1); // 1 = encrypt using key
+
+
+}
+
+/* NAME:
+ *  getRotationKey
+ * USAGE:
+ *  Get rotation key from user specified area such as:
+ *      - Standard input (the console)
+ *      - From a file
+ *      - Randomly generated key function
+ *
+ * INPUT:
+ *  (none)
+ *
+ * RETURN:
+ *  Key to use for the rotation cipher
+ *
+ *
+ * LIMITATIONS:
+ *  Only accepts key values between -26 and 26 (as originally specified)
+ * */
+int getRotationKey(){
+// How would you like to enter key
+    // - Get key from file
+    // - Enter key into console
+    // - Randomly generate key
+
+}
+
+
+void rotationCipher(int key,int direction){
     // direction specifies whether the function is meant to decrypt or encrypt the text
     // it is used later on in the function in a switch case argument
             // 1 = encrypt using given key
             // 2 = decrypt using given key
-            // 3 = decrpyt automatically
+            // 3 = decrypt automatically
             // 4 = encrypt using random key
-        
+
     /********************************
-    Collect Encyption Key from User
+    Collect Encryption Key from User
     *********************************/
     // TODO: (FIX) CREATE FUNCTION (GET ROTATION KEY)
 
     // User selects where key is to come from
-     int key = 0;
-     //key = -19;           // HARDCODED KEY FIX(remove)
+    // int key = 0;
+    //key = -19;           // HARDCODED KEY FIX(remove)
                                 // KEY FROM FILE
 
     switch (direction){
         case 1: // Encrypt with given key
-           printf("Please Enter Key:"CYAN);
-           scanf("%d",&key);          // USER INPUT KEY
-           printf(RESET"You entered:"YELLOW"%d\n"RESET,key);
+           printf("Please Enter Key:");
+         //  scanf("%d",&key);          // USER INPUT KEY
+           printf("You entered:""%d\n",key);
            break;
         case 2:// Encrypt with random key
             while(key == 0) { // Makes sure key is not zero
                 key = generateKey(); // Gets generated key from function (returns 0 to 25)
             }
             // prints both versions of generated key
-            printf("Generated key is:"YELLOW"%d (or %d)\n"RESET,key,-(26-key));
+            printf("Generated key is:""%d (or %d)\n",key,-(26-key));
             break;
         case 3: // Decrypt with given key
-           printf("Please Enter Key:"CYAN);
+           printf("Please Enter Key:");
            scanf("%d",&key); // USER INPUT KEY
-           printf(RESET"You entered:"YELLOW"%d\n"RESET,key);
+           printf("You entered:""%d\n",key);
             // Encrypt key = key
             // Decrypt key = 26-key (Changes key so it reverses encryption)
             key = -key;
             break;
         case 4:
         default:
-            printf(RED"Fatal error, this should never happen"RESET);
+            printf("Fatal error, this should never happen");
             break;
     }
-    
+
     if(key>=-26&&key<=26){ // Checks key is valid
         if(key<0){
             /* Converts key to a number from 0 to 25
@@ -245,7 +323,7 @@ void rotationCipher(int direction){
         // Gives user an error when key value is not between -26 and 26
         printf("The provided key is invalid\n");
     }
-    
+
     /********************************
     Collect Input Text
     *********************************/
@@ -263,12 +341,13 @@ void rotationCipher(int direction){
     zeroCharArray(textString, MAXCHAR);
     zeroIntegerArray(textInteger, MAXCHAR);
 
+
     // Collects input string from console
-	printf("\nPlease Enter Text to Encrypt\n "); 
+	printf("\nPlease Enter Text to Encrypt\n ");
 	getchar(); // Clears console (input stream - https://stackoverflow.com/questions/26318275/fgets-skipping-inputs)
 	fgets(textString,MAXCHAR,stdin); //stores user input into a string
         //TODO: Collect text input from user specified file
-        
+
     /********************************
     Perform Encryption/Decryption Using key
     *********************************/
@@ -284,29 +363,30 @@ void rotationCipher(int direction){
             textInteger[index] = textInteger[index] - 32;   // 97(letter a) - 32 = 65(letter A)         
 	    }
 	}
-    
+
     for(int index = 0; index<MAXCHAR; index++){
-	
+
     	// Convert capitals letters into numbers A = 0, B = 1, C = 2... e.c.t.
     	if(textInteger[index]>=65&&textInteger[index]<=90){ // Makes sure it only converts capital letters (leaves spaces)
-    	   textInteger[index]=textInteger[index]-65; 	
-        
+    	   textInteger[index]=textInteger[index]-65;
+
     	   // Adds key value onto code
     	   textInteger[index] = (textInteger[index]+key)%26;
 
             // Convert text back to capital letters
-            textInteger[index]=textInteger[index]+65; 
+            textInteger[index]=textInteger[index]+65;
         }//END IF
     }
     // todo: printArray arguments: arrayname, arraysize
+
+
 // PRINT STRING
     printf("\nINPUT STRING:\n");
-	for(int index = 0; index<MAXCHAR; index++){
-	printf(YELLOW"%c"RESET,textString[index]);
-	}
+        printArray(textString,MAXCHAR);
+
 	printf("\nOUTPUT STRING:\n");
 	for(int index = 0; index<MAXCHAR; index++){
-	printf(YELLOW"%c"RESET,textInteger[index]);
+	printf("%c",textInteger[index]);
 	}
 
 //printf("%d",textInteger);
@@ -437,78 +517,7 @@ void substitutionCipher(){
     }
 }
 
-void analyseText(){ // NOTE ONLY WORKS WITH CAPITAL LETTERS CURRENTLY
-    char letters[]= {65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90};
-                    //A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
 
-    int stats[26]; // stores letter occurrences
-    zeroIntegerArray(stats,26);
-    int MAXCHAR = 20000;
-    char inputText[MAXCHAR];
-    zeroCharArray(inputText,MAXCHAR); // Required to clear the memory allocated to these addresses
-    //char inputText[] = "YKBXGWLKHFTGLVHNGMKRFXGEXGWFXRHNKXTKLBVHFXMHUNKRVTXLTKGHMMHIKTBLXABFMAXXOBEMATMFXGWHEBOXLTYMXKMAXFMAXZHHWBLHYMBGMXKKXWPBMAMAXBKUHGXLLHEXMBMUXPBMAVTXLTKMAXGHUEXUKNMNLATMAMHEWRHNVTXLTKPTLTFUBMBHNLBYBMPXKXLHBMPTLTZKBXOHNLYTNEMTGWZKBXOHNLERATMAVTXLTKTGLPXKWBMAXKXNGWXKEXTOXHYUKNMNLTGWMAXKXLMYHKUKNMNLBLTGAHGHNKTUEXFTGLHTKXMAXRTEETEEAHGHNKTUEXFXGVHFXBMHLIXTDBGVTXLTKLYNGXKTE";
-
-    // Record user input
-  //  printf("\nPlease Enter Text to Encrypt:\n");
-  //  getText(char textArray, int textInteger,int arraySize);
-    fgets(inputText,MAXCHAR,stdin); //stores user input into a string
-
-int count = 0;//Temp for stats FIX to find eng letter frequency
-
-    // Perform analysis
-//    for (int i = 0; i<MAXCHAR; i++){ // For each letter in the input
-//        for(int index = 0; index<26;index++){ // Check against letters
-//            if(inputText[i]==letters[index]){
-//               stats[index]++; // add one to the letter count
-//               count++; // counts total characters in input text
-//               break; // leave loop as soon as letter is found
-//            }
-//        }
-//    }
-
-    int key = 0; // Current key
-    int maxkey = 0;
-    float chiValue;
-    float chiMaxValue = 0;
-    float normLetterChance[6]; // chance of each english letter occurring
-    normLetterChance[0]= 0.1;
-    normLetterChance[1]= 0.1;
-    normLetterChance[2]= 0.15;
-    normLetterChance[3]= 0.2;
-    normLetterChance[4]= 0.3;
-    normLetterChance[5]= 0.15;
-    float expectedStats[26]; // change to expectedLetterCount?
-    stats[0]=30;
-    stats[1]=14;
-    stats[2]=34;
-    stats[3]=45;
-    stats[4]=57;
-    stats[5]=20;
-    count = 200;
-    // FOR EACH KEY COMBINATION
-        // Normal probability of each letter
-        // expected occurrences of each letter based on normal letter probability (letterOccurrences * letterStats)
-
-
-        // FOR EACH LETTER (FIND CHI VALUE) - start with one
-            chiValue = 0; // initialise chi value each time it runs
-            for (int letter = 0;letter<6;letter++){
-                // Uses english letter frequency to find expected letter count
-                expectedStats[letter] = count*normLetterChance[letter];
-                // Partially completes chi square (goodness of fit) test comparing to English letter frequency
-                chiValue = (stats[letter]-expectedStats[letter])*(stats[letter]-expectedStats[letter])/expectedStats[letter] + chiValue;
-                printf("Exp Stats: %f\n",expectedStats[letter]);
-                printf("NORM LETTER CHANCE: %f\n",normLetterChance[letter]);
-                printf("Chi Score: %f\n",chiValue);
-            }
-
-//    for (int i =0; i<26;i++)
-//        printf("%c occurs %d times\n",i+65,stats[i]);
-//    for (int i =0; i<26;i++)
-//        printf("%c occurs %f %% of times\n",i+65,(float)(stats[i])/count*100);
-
-    printf("COUNT OF LETTERS IS:%d\n",count);
-}
 
 int generateKey(){
 /* Initialises random number generator the first time it is run
@@ -545,6 +554,86 @@ void zeroIntegerArray(int arrayName[], int arraySize){
     }
 }
 
+void printArray(char arrayName[],int arraySize){
+    for(int index = 0; index<arraySize; index++){
+        printf("%c",arrayName[index]);
+    }
+    printf("\n"); // Leaves a new line after printed text
+}
+
+
+void analyseText(){ // NOTE ONLY WORKS WITH CAPITAL LETTERS CURRENTLY
+    char letters[]= {65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90};
+    //A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
+
+    int stats[26]; // stores letter occurrences
+    zeroIntegerArray(stats,26);
+    int MAXCHAR = 20000;
+    char inputText[MAXCHAR];
+    zeroCharArray(inputText,MAXCHAR); // Required to clear the memory allocated to these addresses
+    //char inputText[] = "YKBXGWLKHFTGLVHNGMKRFXGEXGWFXRHNKXTKLBVHFXMHUNKRVTXLTKGHMMHIKTBLXABFMAXXOBEMATMFXGWHEBOXLTYMXKMAXFMAXZHHWBLHYMBGMXKKXWPBMAMAXBKUHGXLLHEXMBMUXPBMAVTXLTKMAXGHUEXUKNMNLATMAMHEWRHNVTXLTKPTLTFUBMBHNLBYBMPXKXLHBMPTLTZKBXOHNLYTNEMTGWZKBXOHNLERATMAVTXLTKTGLPXKWBMAXKXNGWXKEXTOXHYUKNMNLTGWMAXKXLMYHKUKNMNLBLTGAHGHNKTUEXFTGLHTKXMAXRTEETEEAHGHNKTUEXFXGVHFXBMHLIXTDBGVTXLTKLYNGXKTE";
+
+    // Record user input
+    //  printf("\nPlease Enter Text to Encrypt:\n");
+    //  getText(char textArray, int textInteger,int arraySize);
+    fgets(inputText,MAXCHAR,stdin); //stores user input into a string
+
+    int count = 0;//Temp for stats FIX to find eng letter frequency
+
+    // Perform analysis
+//    for (int i = 0; i<MAXCHAR; i++){ // For each letter in the input
+//        for(int index = 0; index<26;index++){ // Check against letters
+//            if(inputText[i]==letters[index]){
+//               stats[index]++; // add one to the letter count
+//               count++; // counts total characters in input text
+//               break; // leave loop as soon as letter is found
+//            }
+//        }
+//    }
+
+    int key = 0; // Current key
+    int maxkey = 0;
+    float chiValue;
+    float chiMaxValue = 0;
+    float normLetterChance[6]; // chance of each english letter occurring
+    normLetterChance[0]= 0.1;
+    normLetterChance[1]= 0.1;
+    normLetterChance[2]= 0.15;
+    normLetterChance[3]= 0.2;
+    normLetterChance[4]= 0.3;
+    normLetterChance[5]= 0.15;
+    float expectedStats[26]; // change to expectedLetterCount?
+    stats[0]=30;
+    stats[1]=14;
+    stats[2]=34;
+    stats[3]=45;
+    stats[4]=57;
+    stats[5]=20;
+    count = 200;
+    // FOR EACH KEY COMBINATION
+    // Normal probability of each letter
+    // expected occurrences of each letter based on normal letter probability (letterOccurrences * letterStats)
+
+
+    // FOR EACH LETTER (FIND CHI VALUE) - start with one
+    chiValue = 0; // initialise chi value each time it runs
+    for (int letter = 0;letter<6;letter++){
+        // Uses english letter frequency to find expected letter count
+        expectedStats[letter] = count*normLetterChance[letter];
+        // Partially completes chi square (goodness of fit) test comparing to English letter frequency
+        chiValue = (stats[letter]-expectedStats[letter])*(stats[letter]-expectedStats[letter])/expectedStats[letter] + chiValue;
+        printf("Exp Stats: %f\n",expectedStats[letter]);
+        printf("NORM LETTER CHANCE: %f\n",normLetterChance[letter]);
+        printf("Chi Score: %f\n",chiValue);
+    }
+
+//    for (int i =0; i<26;i++)
+//        printf("%c occurs %d times\n",i+65,stats[i]);
+//    for (int i =0; i<26;i++)
+//        printf("%c occurs %f %% of times\n",i+65,(float)(stats[i])/count*100);
+
+    printf("COUNT OF LETTERS IS:%d\n",count);
+}
 
 void clearStdin(){
     // Probably not required while: can be used but left just in case
