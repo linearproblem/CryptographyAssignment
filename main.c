@@ -70,20 +70,21 @@ void getSubstitutionKey(int subKey[]); // Gets substitution key from user specif
 void generateSubKey(int subKey[]); // Generates substitution key and prints it to console
 void substitutionCipher(char inputText[],int subKey[],int letterCount, int direction); // ENCRYPT and DECRYPT using substitution Cipher
 
-
-
 // Common functions (used both cipher types functions)
 void getInputText(char textInput[], int *letterCount); // Collects input text from user specified location
 int generateKey(); // Generates a key (0 to 25) for rotation and substitution cipher
 void printArray(char arrayName[],int arraySize); // Used to print input and output text
-
-float analyseText(int textInput[],int letterCount); // FIX place in separate file
 
 
 // Zeroing Functions
 void zeroCharArray(char arrayName[], int arraySize); // Sets all values in a char type array to zero
 void zeroIntegerArray(int arrayName[], int arraySize); // Sets all values in an integer type array to zero
 
+
+// Automatic Decryption
+    // Not fully functioning, sometimes works
+void crackRotation(); // Function used to crack rotation cipher
+float findChiScore(int inputText[],int letterCount); // Finds goodness of fit of a rotation
 
 
 /******************************************************************************
@@ -94,6 +95,8 @@ int main(){
         printHeader();
 
     // Main Menu
+    int userInput = 0; // Initialises the user input selection to make sure it is not equal to 7
+    while (userInput != 7){ // Repeats menu selection until user decides to exit
     printf("\n-- Main Menu --\n");
     // Display menu options
     printf("\tRotation Cipher\n");
@@ -103,15 +106,12 @@ int main(){
     printf("\t\t 3: Encrypt text\n");
     printf("\t\t 4: Decrypt text with key\n");
     printf("\n\tOther\n");
-    printf("\t\t 5: Analyse text\n");
+    printf("\t\t 5: Crack Rotation Cipher (beta)\n");
     printf("\t\t 0: Exit Application\n");
 
     // Collect user selection
-    int userInput = 0; // Initialises the user input selection to make sure it is not equal to 7
     printf("\nPlease select an option: ");
-    while (userInput != 7){ // Repeats menu selection until user decides to exit
         scanf("%d",&userInput); // Record User Input
-        //  printf("%d" ,userInput);
         switch (userInput) {
 
             case 1:
@@ -130,6 +130,9 @@ int main(){
                 // Substitution cipher decrypt with key
                 decryptSubstitution();
                 break;
+            case 5:
+                crackRotation();
+                break;
             case 0:
                 // Exit application
                 printf("You have chosen to leave");
@@ -144,6 +147,7 @@ int main(){
 /******************************************************************************
 EXTERNAL FUNCTIONS (function definitions)
 ******************************************************************************/
+
 /* NAME:
  *  printHeader
  * USAGE:
@@ -160,6 +164,7 @@ EXTERNAL FUNCTIONS (function definitions)
  * */
 void printHeader(){
     // Prints splash back
+    printf("\n");
     printf(" _____              _       ___  _         _                 \n");
     printf("/__   \\  ___ __  __| |_    / __\\(_) _ __  | |__    ___  _ __ \n");
     printf("  / /\\/ / _ \\ \\/ /| __|   / /   | || '_ \\ | '_ \\  / _ \\| '__|\n");
@@ -899,84 +904,17 @@ void zeroIntegerArray(int arrayName[], int arraySize){
 
 
 
-
-float analyseText(int inputText,int letterCount){ // NOTE ONLY WORKS WITH CAPITAL LETTERS CURRENTLY
-    char letters[]= {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
-    //A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
-
-    int stats[26]; // stores letter occurrences
-    zeroIntegerArray(stats,26);
-
-    //char inputText[] = "YKBXGWLKHFTGLVHNGMKRFXGEXGWFXRHNKXTKLBVHFXMHUNKRVTXLTKGHMMHIKTBLXABFMAXXOBEMATMFXGWHEBOXLTYMXKMAXFMAXZHHWBLHYMBGMXKKXWPBMAMAXBKUHGXLLHEXMBMUXPBMAVTXLTKMAXGHUEXUKNMNLATMAMHEWRHNVTXLTKPTLTFUBMBHNLBYBMPXKXLHBMPTLTZKBXOHNLYTNEMTGWZKBXOHNLERATMAVTXLTKTGLPXKWBMAXKXNGWXKEXTOXHYUKNMNLTGWMAXKXLMYHKUKNMNLBLTGAHGHNKTUEXFTGLHTKXMAXRTEETEEAHGHNKTUEXFXGVHFXBMHLIXTDBGVTXLTKLYNGXKTE";
-    getInputText(inputText,&letterCount);
-
-    int count = 0;//Temp for stats FIX to find eng letter frequency
-
-  //   Perform analysis
-    for (int i = 0; i<letterCount; i++){ // For each letter in the input
-        for(int index = 0; index<26;index++){ // Check against letters
-            if(inputText[i]==index){
-               stats[index]++; // add one to the letter count
-               count++; // counts total characters in input text
-               break; // leave loop as soon as letter is found
-            }
-        }
-    }
-
-    int key = 0; // Current key
-    int maxkey = 0;
-    float chiValue;
-    float chiMaxValue = 0;
-    float normLetterChance[6]; // chance of each english letter occurring
-    normLetterChance[0]= 0.1;
-    normLetterChance[1]= 0.1;
-    normLetterChance[2]= 0.15;
-    normLetterChance[3]= 0.2;
-    normLetterChance[4]= 0.3;
-    normLetterChance[5]= 0.15;
-    float expectedStats[26]; // change to expectedLetterCount?
-    stats[0]=30;
-    stats[1]=14;
-    stats[2]=34;
-    stats[3]=45;
-    stats[4]=57;
-    stats[5]=20;
-    count = 200;
-    // FOR EACH KEY COMBINATION
-    // Normal probability of each letter
-    // expected occurrences of each letter based on normal letter probability (letterOccurrences * letterStats)
-
-
-    // FOR EACH LETTER (FIND CHI VALUE) - start with one
-    chiValue = 0; // initialise chi value each time it runs
-    for (int letter = 0;letter<6;letter++){
-        // Uses english letter frequency to find expected letter count
-        expectedStats[letter] = count*normLetterChance[letter];
-        // Partially completes chi square (goodness of fit) test comparing to English letter frequency
-        chiValue = (stats[letter]-expectedStats[letter])*(stats[letter]-expectedStats[letter])/expectedStats[letter] + chiValue;
-        printf("Exp Stats: %f\n",expectedStats[letter]);
-        printf("NORM LETTER CHANCE: %f\n",normLetterChance[letter]);
-        printf("Chi Score: %f\n",chiValue);
-    }
-
-//    for (int i =0; i<26;i++)
-//        printf("%c occurs %d times\n",i+65,stats[i]);
-//    for (int i =0; i<26;i++)
-//        printf("%c occurs %f %% of times\n",i+65,(float)(stats[i])/count*100);
-
-    printf("COUNT OF LETTERS IS:%d\n",count);
-}
-
-
-
+/******************************************************************************
+Automatic Decryption/Analysis
+******************************************************************************/
 
 void crackRotation(){
     int MAXCHAR = 20000;
     int letterCount;
     char inputText[MAXCHAR];
     float chiScore = 0;
-    float bestChi = 0;
-    int bestKey; // Stores most likely key based on highest chi score
+    float bestChi = 100;
+    int bestKey = 0; // Stores most likely key based on lowest chi score
 
     getInputText(inputText,&letterCount);
     int textInteger[letterCount];
@@ -994,35 +932,73 @@ void crackRotation(){
         // Convert capitals letters into numbers A = 0, B = 1, C = 2... e.c.t.
         if(textInteger[index]>=65&&textInteger[index]<=90){ // Makes sure it only converts capital letters (leaves spaces)
             textInteger[index]=textInteger[index]-65;
-    }
+        }
     }
 
 // trying to return array after key has been applied, could use for rotation cipher
-    for(int key = 1; key<26; key++){
-            // for each letter in the text do the following:
-            for(int index = 0; index<letterCount; index++){
-                // Adds key value onto code
-                textInteger[index] = (textInteger[index]+key)%26;
-            }
-        chiScore = analyseText(textInteger);
+    for(int key = 25; key>0; key--){
+        // for each letter in the text do the following:
+        for(int index = 0; index<letterCount; index++){
+            // Adds key value onto code
+            textInteger[index] = (textInteger[index]+1)%26;
+        }
+        chiScore = findChiScore(textInteger,letterCount);
 
-        if (chiScore>bestChi) {
+        if (chiScore<bestChi) {
             bestChi = chiScore;
             bestKey = key;
+
         }
+    }
+    rotationCipher(inputText,bestKey,letterCount);
+    printf("Decrypted Text:\n");
+    printArray(inputText,letterCount);
 
+    printf("..was worth a try..\n");
+};
+
+
+
+float findChiScore(int inputText[],int letterCount){ // NOTE ONLY WORKS WITH CAPITAL LETTERS CURRENTLY
+    char letters[]= {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25};
+    //A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
+
+    int stats[26]; // stores letter occurrences
+    zeroIntegerArray(stats,26); // zeroes each letter's stats value
+    int count = 0;
+
+  //   Perform analysis
+    for (int i = 0; i<letterCount; i++){ // For each letter in the input
+        for(int index = 0; index<26;index++){ // Check against letters
+            if(inputText[i]==index){
+               stats[index]++; // add one to the letter count
+               count++;
+               break; // leave loop as soon as letter is found
+            }
+        }
     }
 
+    float chiValue;
 
+    // Normal probability of each letter (from https://pages.mtu.edu/~shene/NSF-4/Tutorial/VIG/Vig-IOC.html#English-Freq-Table)
+    float normLetterChance[] = {0.0815,0.0144,0.0267,0.0379,0.0311,0.0292,0.0199,0.0526,0.0635,0.0013,0.0042,0.0339,0.0254,0.0710,0.0800,0.0198,0.0012,0.0683,0.0610,0.1047,0.0246,0.0092,0.0154,0.0017,0.0198,0.0008};
 
+    float observedFrequency[26];
 
-    // Convert integers back to chars
-    for(int index = 0; index<letterCount; index++){
-        if (textInteger[index]>=65&&textInteger[index]<=90) // Ensures all integer values can fit into a char
-            inputText[index] = textInteger[index];
+    // FOR EACH LETTER (FIND CHI VALUE) - start with one
+    chiValue = 0; // initialise chi value each time it runs
+    for (int letter = 0;letter<6;letter++){
+        // Uses english letter frequency to find expected letter count
+        observedFrequency[letter] = stats[letter]/(float)count;
+
+        // Partially completes chi square (goodness of fit) test comparing to English letter frequency
+        chiValue = ((observedFrequency[letter]-normLetterChance[letter])*(observedFrequency[letter]-normLetterChance[letter])/normLetterChance[letter]) + chiValue;
     }
-
+    return chiValue;
 }
+
+
+
 
 
 // CONSOLE COLOUR
