@@ -1,5 +1,13 @@
 /******************************************************************************
+ENGG1500 Cryptography Assignment
+ - Basic text Encrpytion Decryption tool using rotation and substitution cipher
 
+    Author: linearproblem
+
+    Version: 1.0
+    Last Updated: 28/04/2019
+    File Name: main.c
+    File Size: 38KB
 
 ******************************************************************************/
 /******************************************************************************
@@ -18,26 +26,22 @@ LAYOUT (menu tree):
         // Get Key
             // From console
             // From file
-            // Randomly generate
         // Get text
             // From console
             // From file
 // Substitution Cipher
-        // Get Key
-            // From console
-            // From file
-            // Randomly generate
+        // Get SubKey
         // Get text
-            // From console
-            // From file
     // Decrypt
         // Get Key
             // From console
             // From file
-            // Randomly generate
         // Get text
             // From console
             // From file
+
+
+Output text is automatically sent to a file "output.txt"
 
 ******************************************************************************/
 
@@ -74,6 +78,7 @@ void substitutionCipher(char inputText[],int subKey[],int letterCount, int direc
 void getInputText(char textInput[], int *letterCount); // Collects input text from user specified location
 int generateKey(); // Generates a key (0 to 25) for rotation and substitution cipher
 void printArray(char arrayName[],int arraySize); // Used to print input and output text
+void writeToFile(char arrayName[]);
 
 
 // Zeroing Functions
@@ -212,6 +217,9 @@ void encryptRotation(){
     // Print output text to the console
     printf("\nOUTPUT TEXT:\n");
     printArray(inputText,letterCount);
+
+    //Write output to file
+    writeToFile(inputText);
 }
 
 /* NAME:
@@ -250,6 +258,9 @@ void decryptRotation(){
     // Print output text to the console
     printf("\nOUTPUT TEXT:\n");
     printArray(inputText,letterCount);
+
+    //Write output to file
+    writeToFile(inputText);
 }
 
 /* NAME:
@@ -452,6 +463,9 @@ void encryptSubstitution(){
     // Print output text to the console
     printf("\nOUTPUT TEXT:\n");
     printArray(inputText,letterCount);
+
+    //Write output to file
+    writeToFile(inputText);
 }
 
 /* NAME:
@@ -493,6 +507,9 @@ void decryptSubstitution(){
     // Print output text to the console
     printf("\nOUTPUT TEXT:\n");
     printArray(inputText,letterCount);
+
+    //Write output to file
+    writeToFile(inputText);
 }
 
 /* NAME:
@@ -849,6 +866,35 @@ void printArray(char arrayName[],int arraySize){
 }
 
 /* NAME:
+ *  writeToFile
+ * USAGE:
+ *  Used to quickly write output text to ./output.txt file,
+ *   doesn't bother asking for location to avoid over complicating the program
+ *
+ * INPUT:
+ *  char array to write to file
+ *  items in array (array size)
+ *
+ * RETURN:
+ *  (none)
+ *
+ *
+ * LIMITATIONS:
+ *  writes all values in an array on a single line
+ *  does not check all array values actually exist
+ *  only writes arrays of type char to file
+ *  cannot change filename or type
+ *
+ * */
+void writeToFile(char arrayName[]){
+    FILE *output;
+    output = fopen("output.txt","w");
+    fprintf(output, "%s", arrayName);
+    fclose(output);
+    printf("Saved to \"/.output.txt\"\n");
+}
+
+/* NAME:
  *  zeroCharArray
  * USAGE:
  *  Used to set each value in a char array to zero
@@ -908,6 +954,23 @@ void zeroIntegerArray(int arrayName[], int arraySize){
 Automatic Decryption/Analysis
 ******************************************************************************/
 
+/* NAME:
+ *  crackRotation (BETA)
+ * USAGE:
+ *  Used to try and find the most likely used rotation key
+ *
+ * INPUT:
+ *  (none)
+ *
+ * RETURN:
+ *  (none)
+ *
+ *
+ * LIMITATIONS:
+ *  Does not look for most common letter
+ *  Still has many issues with a lot of text
+ *
+ * */
 void crackRotation(){
     int MAXCHAR = 20000;
     int letterCount;
@@ -958,7 +1021,24 @@ void crackRotation(){
 };
 
 
-
+/* NAME:
+ *  findChiScore
+ * USAGE:
+ *  Used to find the goodness of fit between,
+ *   frequency of letters in text and normal Engligh language letter frequency
+ *
+ * INPUT:
+ *  char array with english text
+ *
+ * RETURN:
+ *  chiValue (or chi score)
+ *
+ *
+ * LIMITATIONS:
+ *  Works slower than it should, would be better if it only recorded stats once
+ *   and used them to the goodness of fit by passing them onto their sequential letter partner
+ *
+ * */
 float findChiScore(int inputText[],int letterCount){ // NOTE ONLY WORKS WITH CAPITAL LETTERS CURRENTLY
     char letters[]= {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25};
     //A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
@@ -996,10 +1076,3 @@ float findChiScore(int inputText[],int letterCount){ // NOTE ONLY WORKS WITH CAP
     }
     return chiValue;
 }
-
-
-
-
-
-// CONSOLE COLOUR
-// https://stackoverflow.com/questions/3219393/stdlib-and-colored-output-in-c
