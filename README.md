@@ -4,15 +4,17 @@ Basic Cryptography assignment using C code
 Simple console C application written to encrypt and decrypt text from a user given file. Text is encrypted and decrypted using either a rotation cipher (also called a Ceasar Cipher) or by using a Substitution Cipher. 
 
 ## Getting Started
-
-You will need a key and some text to encrypt/decrypt before using this application. 
+This is a C console application (without any command line arguments) so will need to be compiled and then run with compadible console application to make use of it.
 
 
 ## Using the Program
+You will at minimum some text to encrypt/decrypt before using this application.
 ### Keys
+Keys can be provided or automatically generated when running the application, the key is set before selecting the input text.
 #### Rotation Cipher
 
-key must be between 0 and 26.
+The provided key must be between 0 and 26.
+*note randomly generated keys will never be 0*
 
 ```
 e.g if key = 3
@@ -22,7 +24,7 @@ outputText = "KHOOR ZRUOG"
 ```
 
 
-### Substitution Cipher
+#### Substitution Cipher
 
 Key value should be given as unique characters between A-Z and/or a-z
 
