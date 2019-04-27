@@ -37,6 +37,12 @@ outputText = "ITZZD JDVZR"
 ```
 ### Input Text
 To use this cipher you are able to input text into the console or via a file (in the same directory as main.c)
+```
+$Please enter file path of input text (e.g. input.txt)
+$File Path: ./input.txt 
+
+This will take text from the "input.txt" file
+```
 
 ### Output Text
 Output text is printed to console, then automatically written to a file "./output.txt"
