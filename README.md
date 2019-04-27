@@ -9,10 +9,8 @@ You will need a key and some text to encrypt/decrypt before using this applicati
 
 
 ## Using the Program
-
-Explain how to run the automated tests for this system
-
-### Rotation Cipher
+### Keys
+#### Rotation Cipher
 
 key must be between 0 and 26.
 
@@ -20,8 +18,7 @@ key must be between 0 and 26.
 e.g if key = 3
 
 inputText = "Hello world"
-outputText = ""
-
+outputText = "KHOOR ZRUOG"
 ```
 
 
@@ -39,9 +36,11 @@ outputText = "ITZZD JDVZR"
 ### Input Text
 To use this cipher you are able to input text into the console or via a file (in the same directory as main.c)
 
+### Output Text
+Output text is printed to console, then automatically written to a file "./output.txt"
 
 ## Authors
 
-* **linearproblem** - *creator* - [PurpleBooth](https://github.com/linearproblem)
+* **linearproblem** - *creator* - [Github](https://github.com/linearproblem)
 
 
