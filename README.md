@@ -8,17 +8,6 @@ Simple console C application written to encrypt and decrypt text from a user giv
 You will need a key and some text to encrypt/decrypt before using this application. 
 
 
-### Prerequisites
-
-Compadible GCC compiler.
-
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
-
-
 ## Using the Program
 
 Explain how to run the automated tests for this system
@@ -39,6 +28,7 @@ outputText = ""
 ### Substitution Cipher
 
 Key value should be given as unique characters between A-Z and/or a-z
+
 if 'a' is used 'A' should not be used
 
 ```
