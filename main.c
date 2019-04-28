@@ -97,16 +97,15 @@ void crackRotation2(char inputText[],int letterCount); // Method 2 to crack rota
 void crackSubstitution(); // Tries to crack substitution cipher text
 
 void findLetterFrequency(char inputText[],int letterCount,float letterFrequency[]); // Finds frequency of letter as percentage total letters in text
-float findChiScore(int inputText[],int letterCount); // Finds goodness of fit of a rotation key
+double findChiScore(int inputText[],int letterCount); // Finds goodness of fit of a rotation key
 
 
 /******************************************************************************
 MAIN
 ******************************************************************************/
 int main(){
-    crackSubstitution();
+    // crackSubstitution(); // Uncomment me to test, does't work properly from menu option
 
-/*
     // Prints application header
         printHeader();
 
@@ -123,6 +122,7 @@ int main(){
     printf("\t\t 4: Decrypt text with key\n");
     printf("\n\tOther\n");
     printf("\t\t 5: Crack Rotation Cipher\n");
+    printf("\t\t 6: Crack Substitution Cipher (view bugs)\n"); // Sees input as "\t" after menu selection
     printf("\t\t 0: Exit Application\n");
 
     // Collect user selection
@@ -149,6 +149,10 @@ int main(){
             case 5:
                 crackRotation();
                 break;
+            case 6:
+                printf("\nPlease run directly by uncommenting line of code\n\t\t^\n\t\t|\n\t\t|\n");
+                crackSubstitution();
+                break;
             case 0:
                 // Exit application
                 printf("You have chosen to leave");
@@ -158,8 +162,6 @@ int main(){
                 break;
         }
     }
-    */
-return 0; // Fix
 }
 
 /******************************************************************************
@@ -408,7 +410,7 @@ void rotationCipher(char inputText[],int key,int letterCount){
 	// Convert lowercase characters to uppercase
 	for(int index = 0; index<letterCount; index++){
 	    if (textInteger[index]>=97&&textInteger[index]<=122){ // Checks if the ACII letter is in the lowercase range i.e [97(a) to 122(z)]
-            textInteger[index] = textInteger[index] - 32;   // 97(letter a) - 32 = 65(letter A)         
+            textInteger[index] = textInteger[index] - 32;   // 97(letter a) - 32 = 65(letter A)
 	    }
 	}
 
@@ -605,6 +607,9 @@ void getSubstitutionKey(int subKey[]){
             // Gets key value from random key function & prints it to console
             printf("\nThe key is: ");// Print key to console for user confirmation
             generateSubKey(subKey); // Get sub key
+            for (int index = 0; index <26 ; index++){ // print substitution key
+                printf("%c",subKey[index]+65);
+            }
             break;
         default:
             // Notifies user of invalid selection and prompts them to try again
@@ -624,7 +629,23 @@ void getSubstitutionKey(int subKey[]){
     }
 }
 
-
+/* NAME:
+ *  generateSubKey
+ * USAGE:
+ *  Generates substitution key using random key generator function
+ *  Checks allocated letters are only allocated once (unique)
+ *  Allows values to be substituted for themselves (e.g A can swap with A as per assignment)
+ *
+ * INPUT:
+ *  Substitution Key to use for the substitution cipher
+ *
+ * RETURN: (modifies input values)
+ *  (none)
+ *
+ * LIMITATIONS:
+ *  Generates values only between 0-25, other functions must be able to convert the values if required
+ *
+ * */
 void generateSubKey(int subKey[]){
     // Generate substitution key
     for (int index = 0; index < 26; index++) {
@@ -637,11 +658,6 @@ void generateSubKey(int subKey[]){
                 break;   // Breaks loop that checks for uniqueness as soon as it is found the key is not unique
             }
         }
-    }
-
-    // print substitution key
-    for (int index = 0; index <26 ; index++){
-        printf("%c",subKey[index]+65);
     }
 }
 
@@ -672,7 +688,6 @@ void generateSubKey(int subKey[]){
 void substitutionCipher(char inputText[],int subKey[],int letterCount,int direction){
     int textInteger[letterCount]; // Stores text as integer values
     zeroIntegerArray(textInteger, letterCount);
-
 
     // Convert char values into integer equivalents before performing mathematical operation
     for(int index = 0; index< letterCount; index++){
@@ -996,7 +1011,7 @@ Automatic Decryption/Analysis
 ******************************************************************************/
 
 /* NAME:
- *  crackRotation (BETA)
+ *  crackRotation
  * USAGE:
  *  Used to try and find the most likely used rotation key passes text to various cracking methods
  *      Uses 2 Methods to find key
@@ -1099,7 +1114,7 @@ void crackRotation1(char inputText[],int letterCount){
         // Apply key to text
         rotationCipher(outputText,key,letterCount);
         // Print output
-        printf("\t"); // Indents output text for readability
+       // printf("\t"); // Indents output text for readability
         printArray(outputText,letterCount);
         printf("\n"); // puts a line spacing between each suggestion
     }
@@ -1126,8 +1141,8 @@ void crackRotation1(char inputText[],int letterCount){
  * */
 void crackRotation2(char inputText[],int letterCount){
 
-    float chiScore = 0;
-    float bestChi = 100;
+    double chiScore = 0;
+    double bestChi = 100;
     int bestKey = 0; // Stores most likely key based on lowest chi score
 
     int textInteger[letterCount]; // Used to store letters as numbers
@@ -1170,7 +1185,7 @@ void crackRotation2(char inputText[],int letterCount){
 }
 
 /* NAME:
- *  crackRotation (BETA)
+ *  crackSubstitution
  * USAGE:
  *  Used to try and find the most likely used rotation key passes text to various cracking methods
  *      Uses 2 Methods to find key
@@ -1188,24 +1203,133 @@ void crackRotation2(char inputText[],int letterCount){
  *
  * */
 void crackSubstitution(){
+
     int MAXCHAR = 20000;
     int letterCount;
     char inputText[MAXCHAR];
 
-    // Collects input text once to pass onto cracking functions & gets letter count
+
+    // Collects input text & gets letter count
     getInputText(inputText,&letterCount);
 
-    printf("Method 1: Find the most common letter and assume it is a common English letter\n");
-    printf("------------------------------------------------------------------------------\n");
-    crackRotation1(inputText,letterCount);
-    printf("******************************************************************************\n");
+    // Store converted text temporarily before printing, required so key can be applied multiple times
+    char outputText[letterCount];
+    // Integer array to store letters to pass onto chi tester
+    int textInteger[letterCount]; // Used to store letters as numbers
 
-    printf("Method 2: Using Chi squared analysis to determine the key that best fits\n");
-    printf("------------------------------------------------------------------------------\n");
-    crackRotation2(inputText,letterCount);
-    printf("******************************************************************************\n");
-};
+    // Key setup
+    int subKey[26]; // Where current substitution key will be stored
+    int tempBestKey[26];
+    int bestSubKey[26]; // Where best substitution key will be stored
+    int letterSwapX; // Stores the index of each letter that will swap
+    int letterSwapY;
+    int letterTemp; // Stores one of the letters before over riding its original value
 
+    // Chi score setup (checks fitness of decryption key)
+    double chiScore = 0;
+    double tempBestChi = 1000000;
+    double bestChi = 1000000; // Large value to initialise as a lower score means better fitness
+    int noChange; // Stores amount of times no change in chi score is found (used to exit trials loop)
+    int n;
+    int prevCycle = -1; // Used to ensure printing to console only happens when the program makes progress
+
+    printf("\nPlease wait while loading:\n");
+
+    for (int cycle = 0; cycle<400; cycle++) { // Determines how many time key will be randomly changed while trialing
+        noChange = 0;
+        n = 0; // Resets count for amount of times chi score is not improved
+        generateSubKey(subKey);
+        // Run fitness test "trial" times
+        for (int trial = 0; trial < 50000; ++trial) {
+            // Copy array before applying key
+            for (int index = 0; index < letterCount; index++) {
+                outputText[index] = inputText[index];   // Copy letters to temporary array
+            }
+            // Swap two letters in the key at random
+            letterSwapX = generateKey(); // Decides on first key index to swap
+            letterSwapY = generateKey(); // Decides on second index of key to swap
+            while (letterSwapX == letterSwapY) { // Makes sure that both index's are unique
+                letterSwapY = generateKey();
+            }
+            letterTemp = subKey[letterSwapX]; // Stores value before overwriting
+            subKey[letterSwapX] = subKey[letterSwapY]; // Passes one value across
+            subKey[letterSwapY] = letterTemp;
+
+            // Apply key to copied text before determining fitness
+            substitutionCipher(outputText, subKey, letterCount, 2); // 2 means the substitution cipher will decrypt
+
+            // Convert letters to numbers between 0 and 25
+            for (int index = 0; index < letterCount; index++) {
+                // Convert char values into integer equivalents
+                textInteger[index] = outputText[index];
+
+                // Convert lower to uppercase
+                if (textInteger[index] >= 97 && textInteger[index] <=
+                                                122) { // Checks if the ACII letter is in the lowercase range i.e [97(a) to 122(z)]
+                    textInteger[index] = textInteger[index] - 32;   // 97(letter a) - 32 = 65(letter A)
+                }
+                // Convert capitals letters into numbers A = 0, B = 1, C = 2... e.c.t.
+                if (textInteger[index] >= 65 &&
+                    textInteger[index] <= 90) { // Makes sure it only converts capital letters (leaves spaces)
+                    textInteger[index] = textInteger[index] - 65;
+                }
+            }
+
+            // Get chi score of current decryption key
+            chiScore = findChiScore(textInteger, letterCount);
+            if (chiScore < tempBestChi) {
+                tempBestChi = chiScore; // saves current best chi score
+                for (int i = 0; i < 26; i++) {
+                    tempBestKey[i] = subKey[i]; // Sets current high scoring key
+                }
+                if (tempBestChi<bestChi){
+                    bestChi = tempBestChi;
+                    for (int i = 0; i < 26; i++) {
+                        bestSubKey[i] = tempBestKey[i]; // Sets current high scoring key
+                        if (prevCycle<cycle)
+                            prevCycle = cycle;
+                        cycle = 0; // restarts cycle if value still improving
+                    }
+                }
+            }
+
+            // Records when score has not improved
+            if ((tempBestChi - chiScore) < 0){
+                n++;
+            }else{
+                n=0;
+            }
+
+            // stop loop if chi score has not improved once after a thousand trials
+            if (n > 1000){
+                break;
+            }
+        }
+
+        // Prints current progress
+        if ((cycle%40) == 0 && cycle>prevCycle) {
+            printf("\nLoading %d%%", cycle/4);
+        }
+        if ((cycle%10) == 0){
+            printf(".");
+        }
+    }
+
+    // Apply best substitution key to input text
+    substitutionCipher(inputText,bestSubKey,letterCount,2); // 2 means the substitution cipher will decrypt
+
+    printf("\n");
+
+    // Print the results
+    printf("\nBest chi score = %f\n",bestChi); // Lowest chi score found
+    printf("Key:");     // Print key found with lowest chi score
+    for (int i = 0; i < 26; ++i) {
+        printf("%c",bestSubKey[i]+65);
+    }
+    printf("\n");
+    printf("\nOutput Text:\n\t");
+    printArray(inputText,letterCount);
+}
 
 /* NAME:
  *  findLetterFrequency
@@ -1273,7 +1397,6 @@ void findLetterFrequency(char inputText[],int letterCount,float letterFrequency[
     }
 }
 
-
 /* NAME:
  *  findChiScore
  * USAGE:
@@ -1292,9 +1415,9 @@ void findLetterFrequency(char inputText[],int letterCount,float letterFrequency[
  *   and used them to the goodness of fit by passing them onto their sequential letter partner
  *
  * */
-float findChiScore(int inputText[],int letterCount){ // NOTE ONLY WORKS WITH CAPITAL LETTERS CURRENTLY
+double findChiScore(int inputText[],int letterCount){
     char letters[]= {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25};
-    //A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z,
+    //A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, //FIX
 
     int stats[26]; // stores letter occurrences
     zeroIntegerArray(stats,26); // zeroes each letter's stats value
@@ -1311,7 +1434,7 @@ float findChiScore(int inputText[],int letterCount){ // NOTE ONLY WORKS WITH CAP
         }
     }
 
-    float chiValue;
+    double chiValue;
 
     // Normal probability of each letter (from https://pages.mtu.edu/~shene/NSF-4/Tutorial/VIG/Vig-IOC.html#English-Freq-Table)
     float normLetterChance[] = {0.0815,0.0144,0.0267,0.0379,0.0311,0.0292,0.0199,0.0526,0.0635,0.0013,0.0042,0.0339,0.0254,0.0710,0.0800,0.0198,0.0012,0.0683,0.0610,0.1047,0.0246,0.0092,0.0154,0.0017,0.0198,0.0008};

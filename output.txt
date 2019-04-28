@@ -1,1 +1,1 @@
-output text should appear here after being encrypted/decrypted
+output text should appear here after being encrypted/decrypted when the key is known
