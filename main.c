@@ -41,6 +41,8 @@ LAYOUT (menu tree):
             // From file
 
 
+
+
 Output text is automatically sent to a file "output.txt"
 
 ******************************************************************************/
@@ -84,18 +86,27 @@ void writeToFile(char arrayName[]);
 // Zeroing Functions
 void zeroCharArray(char arrayName[], int arraySize); // Sets all values in a char type array to zero
 void zeroIntegerArray(int arrayName[], int arraySize); // Sets all values in an integer type array to zero
+void zeroFloatArray(float arrayName[], int arraySize); // Sets all values of float type array to zero
 
 
-// Automatic Decryption
-    // Not fully functioning, sometimes works
-void crackRotation(); // Function used to crack rotation cipher
-float findChiScore(int inputText[],int letterCount); // Finds goodness of fit of a rotation
+// Decryption without key
+void crackRotation(); // Function used to pass text on to rotation cipher methods
+void crackRotation1(char inputText[],int letterCount); // Method 1 to crack rotation cipher (using 4 most common English letters)
+void crackRotation2(char inputText[],int letterCount); // Method 2 to crack rotation cipher (using goodness of fit)
+
+void crackSubstitution(); // Tries to crack substitution cipher text
+
+void findLetterFrequency(char inputText[],int letterCount,float letterFrequency[]); // Finds frequency of letter as percentage total letters in text
+float findChiScore(int inputText[],int letterCount); // Finds goodness of fit of a rotation key
 
 
 /******************************************************************************
 MAIN
 ******************************************************************************/
 int main(){
+    crackSubstitution();
+
+/*
     // Prints application header
         printHeader();
 
@@ -111,7 +122,7 @@ int main(){
     printf("\t\t 3: Encrypt text\n");
     printf("\t\t 4: Decrypt text with key\n");
     printf("\n\tOther\n");
-    printf("\t\t 5: Crack Rotation Cipher (beta)\n");
+    printf("\t\t 5: Crack Rotation Cipher\n");
     printf("\t\t 0: Exit Application\n");
 
     // Collect user selection
@@ -147,6 +158,8 @@ int main(){
                 break;
         }
     }
+    */
+return 0; // Fix
 }
 
 /******************************************************************************
@@ -165,7 +178,7 @@ EXTERNAL FUNCTIONS (function definitions)
  *  (none)
  *
  * LIMITATIONS:
- *  Does not resize well on small monitors
+ *  Does not resize well on small monitors/console windows
  * */
 void printHeader(){
     // Prints splash back
@@ -737,6 +750,7 @@ Shared Functions
  *
  * LIMITATIONS:
  *  Size of text (amount of letters) is restricted to 1000000 (hardcoded)
+ *  Counts spaces as letters
  * */
 void getInputText(char textInput[], int *letterCount){
     int userInput; // Stores user menu selection
@@ -797,7 +811,7 @@ void getInputText(char textInput[], int *letterCount){
     // Determine length of array and pass it to the *letterCount pointer (-1 being the last value of the file input)
     for (int count = 0; count<*letterCount; count++){
         if (textInput[count] == 0 || textInput[count] == -1) {
-            *letterCount = count;
+            *letterCount = count; //Length of array
             break;
         }
     }
@@ -948,6 +962,33 @@ void zeroIntegerArray(int arrayName[], int arraySize){
     }
 }
 
+/* NAME:
+ *  zeroFloatArray
+ * USAGE:
+ *  Used to set each value in a int array to zero
+ *
+ * INPUT:
+ *  int array you wish to zero
+ *  number of items in array (array size) to zero
+ *
+ * RETURN:
+ *  (none)
+ *
+ *
+ * LIMITATIONS:
+ *  does not check all array values actually exist
+ *  only zeros arrays of type float
+ *
+ * */
+void zeroFloatArray(float arrayName[], int arraySize){
+// in above line can use *arrayName or arrayName[]
+/* Sets all values in an array to 0;
+ * */
+    for (int index = 0; index<arraySize; index++){
+        arrayName[index] = 0;
+    }
+}
+
 
 
 /******************************************************************************
@@ -957,7 +998,8 @@ Automatic Decryption/Analysis
 /* NAME:
  *  crackRotation (BETA)
  * USAGE:
- *  Used to try and find the most likely used rotation key
+ *  Used to try and find the most likely used rotation key passes text to various cracking methods
+ *      Uses 2 Methods to find key
  *
  * INPUT:
  *  (none)
@@ -975,14 +1017,120 @@ void crackRotation(){
     int MAXCHAR = 20000;
     int letterCount;
     char inputText[MAXCHAR];
+
+    // Collects input text once to pass onto cracking functions & gets letter count
+    getInputText(inputText,&letterCount);
+
+    printf("Method 1: Find the most common letter and assume it is a common English letter\n");
+    printf("------------------------------------------------------------------------------\n");
+    crackRotation1(inputText,letterCount);
+    printf("******************************************************************************\n");
+
+    printf("Method 2: Using Chi squared analysis to determine the key that best fits\n");
+    printf("------------------------------------------------------------------------------\n");
+    crackRotation2(inputText,letterCount);
+    printf("******************************************************************************\n");
+};
+
+/* NAME:
+ *  crackRotation1
+ * USAGE:
+ *  Finds likely rotation key by assuming most common letter is
+ *      either E, T, A or O (https://www3.nd.edu/~busiforc/handouts/cryptography/letterfrequencies.html)
+ *      (so 4 chances)
+ * INPUT:
+ *  text to encrypt
+ *
+ * RETURN:
+ *  (none)
+ *
+ *
+ * LIMITATIONS:
+ *  Only looks for most common letter, can be expanded to support better analysis
+ *  Longer text paragraphs more likely to be effective
+ *
+ * */
+void crackRotation1(char inputText[],int letterCount){
+    float letterFrequency[26];
+    findLetterFrequency(inputText,letterCount,letterFrequency);
+
+    // Used to store most common letters and their frequencies
+    int mostCommonLetter[4]; // Stores letter
+        zeroIntegerArray(mostCommonLetter,4); // Zeros all values in array
+    float mostCommonFrequency[4]; // Stores frequency
+        zeroFloatArray(mostCommonFrequency,4);
+
+    for (int index = 0; index<26; index++){
+        for (int i = 0; i < 4; ++i) { // Used to find the 4 most common letters
+            if (mostCommonFrequency[i]<letterFrequency[index]){
+                mostCommonFrequency[i]=letterFrequency[index];
+                mostCommonLetter[i]=index;
+                break; // Only stores value in smallest index
+            }
+        }
+    }
+    // Common letter values - E,T,A,O (ACII Values minus 65)
+    int commonLetters[]={4,19,0,14};
+
+    // Store converted text temporarily before printing, required so key can be applied multiple times
+    char outputText[letterCount];
+    int key;
+    // State most common letter
+    printf("Most Common letter frequency is %c with %.2f%%\n\n",mostCommonLetter[0]+65,mostCommonFrequency[0]*(float)100);
+
+    // Show each guessed key
+    for (int i = 0;i<4;i++){
+        // Copy array before applying key
+        for(int index = 0; index<letterCount; index++) {
+            outputText[index] = inputText[index];   // Copy letters to temporary array
+        }
+
+        // Print what the most common letter is assumed to be (such as "if common letter is E")
+        printf("Assuming %c is \"%c\" ",mostCommonLetter[0]+65,commonLetters[i]+65); // +65 converts letter to capital
+
+        // Find key (using difference between common letter and assumed letter)
+        key = mostCommonLetter[0] - commonLetters[i];
+        if (key<0){
+            key = key +26; // Convert key to positive equivalent value (key of -1 is same as key of 25)
+        }
+        printf("(Key = %d):\n",key); // Print key
+        key = 26 - key; // Convert key so it can decrypt text
+
+        // Apply key to text
+        rotationCipher(outputText,key,letterCount);
+        // Print output
+        printf("\t"); // Indents output text for readability
+        printArray(outputText,letterCount);
+        printf("\n"); // puts a line spacing between each suggestion
+    }
+
+}
+
+/* NAME:
+ *  crackRotation2
+ * USAGE:
+ *  Finds likely rotation key by finding frequency of each letter
+ *      comparing it to  normal english letter frequency using a Chi squared (goodness of fit) test
+ *
+ * INPUT:
+ *  text to encrypt
+ *
+ * RETURN:
+ *  (none)
+ *
+ *
+ * LIMITATIONS:
+ *  Does not look for most common letter
+ *  Still has many issues with a lot of text
+ *
+ * */
+void crackRotation2(char inputText[],int letterCount){
+
     float chiScore = 0;
     float bestChi = 100;
     int bestKey = 0; // Stores most likely key based on lowest chi score
 
-    getInputText(inputText,&letterCount);
-    int textInteger[letterCount];
-
-
+    int textInteger[letterCount]; // Used to store letters as numbers
 
     for(int index = 0; index<letterCount; index++){
         // Convert char values into integer equivalents
@@ -999,7 +1147,7 @@ void crackRotation(){
     }
 
 // trying to return array after key has been applied, could use for rotation cipher
-    for(int key = 25; key>0; key--){
+    for(int key = 25; key>0; key--){ // Keys are reverse order to find key used to encrypt (not decrypt)
         // for each letter in the text do the following:
         for(int index = 0; index<letterCount; index++){
             // Adds key value onto code
@@ -1013,12 +1161,117 @@ void crackRotation(){
 
         }
     }
-    rotationCipher(inputText,bestKey,letterCount);
-    printf("Decrypted Text:\n");
-    printArray(inputText,letterCount);
 
-    printf("..was worth a try..\n");
+    printf("Goodness of Fit (key = %d):\n", bestKey); // Prints encryption key to console
+    bestKey = 26 - bestKey; // Reverse key so it decrypts the text
+    rotationCipher(inputText,bestKey,letterCount);
+    printf("\t"); // Indents output text for readability
+    printArray(inputText,letterCount);
+}
+
+/* NAME:
+ *  crackRotation (BETA)
+ * USAGE:
+ *  Used to try and find the most likely used rotation key passes text to various cracking methods
+ *      Uses 2 Methods to find key
+ *
+ * INPUT:
+ *  (none)
+ *
+ * RETURN:
+ *  (none)
+ *
+ *
+ * LIMITATIONS:
+ *  Does not look for most common letter
+ *  Still has many issues with a lot of text
+ *
+ * */
+void crackSubstitution(){
+    int MAXCHAR = 20000;
+    int letterCount;
+    char inputText[MAXCHAR];
+
+    // Collects input text once to pass onto cracking functions & gets letter count
+    getInputText(inputText,&letterCount);
+
+    printf("Method 1: Find the most common letter and assume it is a common English letter\n");
+    printf("------------------------------------------------------------------------------\n");
+    crackRotation1(inputText,letterCount);
+    printf("******************************************************************************\n");
+
+    printf("Method 2: Using Chi squared analysis to determine the key that best fits\n");
+    printf("------------------------------------------------------------------------------\n");
+    crackRotation2(inputText,letterCount);
+    printf("******************************************************************************\n");
 };
+
+
+/* NAME:
+ *  findLetterFrequency
+ * USAGE:
+ *  Used to find the frequency of each A-Z(a-z) letter in an array (as a percentage)
+ *
+ *
+ * INPUT:
+ *  char array with english text
+ *  int letter count (count of all characters including spaces in text)
+ *  int array (size 26) to store the frequency of each letter
+ *          e.g. [0] stores frequency of A
+ *               [1] stores frequency of B
+ *
+ * RETURN:  (modifies the letter frequency array)
+ *  (none)
+ *
+ *
+ * LIMITATIONS:
+ *  Only converts English Characters A-Z and a-z, spaces and other punctuation are left
+ *
+ *
+ * */
+void findLetterFrequency(char inputText[],int letterCount,float letterFrequency[]){
+    int textInteger[letterCount]; // Used to store text as integer while performing mathematical operation
+
+    for(int index = 0; index<letterCount; index++){
+        // Convert char values into integer equivalents
+        textInteger[index] = inputText[index];
+
+        // Swaps out Line Feed/New line character (ACII 10) to a space
+        if (textInteger[index] == 10){  // Can convert to
+            textInteger[index] = 32; // ACII 32 = space
+        }
+
+        // Convert lower to uppercase
+        if (textInteger[index]>=97&&textInteger[index]<=122){ // Checks if the ACII letter is in the lowercase range i.e [97(a) to 122(z)]
+            textInteger[index] = textInteger[index] - 32;   // 97(letter a) - 32 = 65(letter A)
+        }
+        // Convert capitals letters into numbers A = 0, B = 1, C = 2... e.c.t.
+        if(textInteger[index]>=65&&textInteger[index]<=90){ // Makes sure it only converts capital letters (leaves spaces)
+            textInteger[index]=textInteger[index]-65;
+        }
+    }
+
+    // zeroes each letter's frequency value
+    zeroFloatArray(letterFrequency,26);
+
+    int count = 0; // Counts occupancies of letters (so space characters don't dilute the chance of a particular letter occurring)
+
+    //   Perform analysis (finds count of each letter)
+    for (int i = 0; i<letterCount; i++){ // For each letter in the input
+        for(int index = 0; index<26;index++){ // Check against letters
+            if(textInteger[i]==index){
+                letterFrequency[index]++; // add one to the letter count
+                count++;
+                break; // leave loop as soon as letter is found
+            }
+        }
+    }
+
+    // Covert letter count into percentage of letter found in text
+    for (int i = 0; i<26 ; i++){
+        letterFrequency[i] = letterFrequency[i]/(float)count;
+    }
+}
 
 
 /* NAME:
@@ -1047,13 +1300,13 @@ float findChiScore(int inputText[],int letterCount){ // NOTE ONLY WORKS WITH CAP
     zeroIntegerArray(stats,26); // zeroes each letter's stats value
     int count = 0;
 
-  //   Perform analysis
+    //   Perform analysis
     for (int i = 0; i<letterCount; i++){ // For each letter in the input
         for(int index = 0; index<26;index++){ // Check against letters
             if(inputText[i]==index){
-               stats[index]++; // add one to the letter count
-               count++;
-               break; // leave loop as soon as letter is found
+                stats[index]++; // add one to the letter count
+                count++;
+                break; // leave loop as soon as letter is found
             }
         }
     }
@@ -1067,12 +1320,12 @@ float findChiScore(int inputText[],int letterCount){ // NOTE ONLY WORKS WITH CAP
 
     // FOR EACH LETTER (FIND CHI VALUE) - start with one
     chiValue = 0; // initialise chi value each time it runs
-    for (int letter = 0;letter<6;letter++){
+    for (int letter = 0;letter<26;letter++){
         // Uses english letter frequency to find expected letter count
         observedFrequency[letter] = stats[letter]/(float)count;
 
         // Partially completes chi square (goodness of fit) test comparing to English letter frequency
-        chiValue = ((observedFrequency[letter]-normLetterChance[letter])*(observedFrequency[letter]-normLetterChance[letter])/normLetterChance[letter]) + chiValue;
+        chiValue = (observedFrequency[letter]-normLetterChance[letter])*(observedFrequency[letter]-normLetterChance[letter])/normLetterChance[letter] + chiValue;
     }
     return chiValue;
 }
