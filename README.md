@@ -53,7 +53,7 @@ The program is able to decrypt rotation ciphers well and guess a few letters of 
 ### Automatic Rotation
 There are two methods used to try and crack the rotation cipher:
 
-Method 1: find the most common letter in the text, and assume it is one of the most common English characters
+Method 1: find the most common letter in the text, and assume it is one of the most common English characters (4 results)
 
 Method 2: determine the goodness of fit of the text compared to regular English letter frequency for all possible key combinations
 
