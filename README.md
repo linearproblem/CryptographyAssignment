@@ -47,6 +47,28 @@ This will take text from the "input.txt" file
 ### Output Text
 Output text is printed to console, then automatically written to a file "./output.txt"
 
+## Automatic Decryption
+The program is able to decrypt rotation ciphers well and guess a few letters of a substitution cipher
+
+### Automatic Rotation
+There are two methods used to try and crack the rotation cipher:
+Method 1: find the most common letter in the text, and assume it is one of the most common English characters (produces 4 results)
+Method 2: determine the goodness of fit of the text compared to regular English letter frequency for all possible key combinations
+
+### Automatic Substitution Decryption
+Tries to crack the key using a hill climbing technique, finds some letter substitutions. Takes a while as it tests a few combinations, how long it takes will depend on the system running it. On testing it took less than a minute, but it will depend on the size of the text. Longer text files are slower, but generally more accurate.
+
+## Known Bug
+Auto decryption using the substitution cipher does not work when selected from the main menu. It has been placed at the top of the main file and requires uncommenting to function. For currently unknown reasons, the only input text is seen to be only "\t" or horizontal tab when going through the menu, both when retrieving text from a file and from the console.
+The output when selected from the menu will usually be as below:
+```
+Please wait while loading:
+
+Loading 0%....
+```
+
+
+
 ## Authors
 
 * **linearproblem** - *creator* - [Github](https://github.com/linearproblem)

@@ -5,9 +5,9 @@ ENGG1500 Cryptography Assignment
     Author: linearproblem
 
     Version: 1.0
-    Last Updated: 28/04/2019
+    Last Updated: 29/04/2019
     File Name: main.c
-    File Size: 38KB
+    File Size: 51.5KB
 
 ******************************************************************************/
 /******************************************************************************
@@ -39,11 +39,17 @@ LAYOUT (menu tree):
         // Get text
             // From console
             // From file
+// Other
+    // Crack Rotation Cipher (automatically implements 2 methods)
+        // Get text
+            // From console
+            // From file
+    // Crack Substitution cipher (needs to be manually uncommented to work properly, at top of main)
+        // Get text
+    // Exit (returns 0)
 
 
-
-
-Output text is automatically sent to a file "output.txt"
+Output text when there is a known key is automatically sent to a file "output.txt"
 
 ******************************************************************************/
 
@@ -101,7 +107,7 @@ double findChiScore(int inputText[],int letterCount); // Finds goodness of fit o
 
 
 /******************************************************************************
-MAIN
+MAIN (Used as main menu)
 ******************************************************************************/
 int main(){
     // crackSubstitution(); // Uncomment me to test, does't work properly from menu option
@@ -150,7 +156,7 @@ int main(){
                 crackRotation();
                 break;
             case 6:
-                printf("\nPlease run directly by uncommenting line of code\n\t\t^\n\t\t|\n\t\t|\n");
+                printf("\nWont work!: run directly by uncommenting line of code\n\t\t^\n\t\t|\n\t\t|\n");
                 crackSubstitution();
                 break;
             case 0:
@@ -183,7 +189,7 @@ EXTERNAL FUNCTIONS (function definitions)
  *  Does not resize well on small monitors/console windows
  * */
 void printHeader(){
-    // Prints splash back
+    // Prints console header before menu
     printf("\n");
     printf(" _____              _       ___  _         _                 \n");
     printf("/__   \\  ___ __  __| |_    / __\\(_) _ __  | |__    ___  _ __ \n");
@@ -1416,9 +1422,6 @@ void findLetterFrequency(char inputText[],int letterCount,float letterFrequency[
  *
  * */
 double findChiScore(int inputText[],int letterCount){
-    char letters[]= {0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25};
-    //A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, //FIX
-
     int stats[26]; // stores letter occurrences
     zeroIntegerArray(stats,26); // zeroes each letter's stats value
     int count = 0;
