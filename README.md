@@ -52,7 +52,9 @@ The program is able to decrypt rotation ciphers well and guess a few letters of 
 
 ### Automatic Rotation
 There are two methods used to try and crack the rotation cipher:
-Method 1: find the most common letter in the text, and assume it is one of the most common English characters (produces 4 results)
+
+Method 1: find the most common letter in the text, and assume it is one of the most common English characters
+
 Method 2: determine the goodness of fit of the text compared to regular English letter frequency for all possible key combinations
 
 ### Automatic Substitution Decryption
@@ -60,7 +62,8 @@ Tries to crack the key using a hill climbing technique, finds some letter substi
 
 ## Known Bug
 Auto decryption using the substitution cipher does not work when selected from the main menu. It has been placed at the top of the main file and requires uncommenting to function. For currently unknown reasons, the only input text is seen to be only "\t" or horizontal tab when going through the menu, both when retrieving text from a file and from the console.
-The output when selected from the menu will usually be as below:
+
+The output when selected from the menu will either finish too quickly, or hang as below:
 ```
 Please wait while loading:
 
